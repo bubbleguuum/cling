@@ -413,9 +413,14 @@ public class UDA10ServiceDescriptorBinderImpl implements ServiceDescriptorBinder
         appendNewElementIfNotNull(descriptor, actionArgumentElement, ELEMENT.name, actionArgument.getName());
         appendNewElementIfNotNull(descriptor, actionArgumentElement, ELEMENT.direction, actionArgument.getDirection().toString().toLowerCase());
         appendNewElementIfNotNull(descriptor, actionArgumentElement, ELEMENT.relatedStateVariable, actionArgument.getRelatedStateVariableName());
+        
+        /*
+		// WMP12 will discard RenderingControl service if it contains <retval> tags
         if (actionArgument.isReturnValue()) {
             appendNewElement(descriptor, actionArgumentElement, ELEMENT.retval);
         }
+        */
+        
     }
 
     private void generateServiceStateTable(Service serviceModel, Document descriptor, Element scpdElement) {
@@ -466,7 +471,7 @@ public class UDA10ServiceDescriptorBinderImpl implements ServiceDescriptorBinder
             appendNewElementIfNotNull(
                     descriptor, allowedValueRangeElement, ELEMENT.maximum, stateVariable.getTypeDetails().getAllowedValueRange().getMaximum()
             );
-            if (stateVariable.getTypeDetails().getAllowedValueRange().getStep() > 1l) {
+            if (stateVariable.getTypeDetails().getAllowedValueRange().getStep() >= 1l) {
                 appendNewElementIfNotNull(
                         descriptor, allowedValueRangeElement, ELEMENT.step, stateVariable.getTypeDetails().getAllowedValueRange().getStep()
                 );
