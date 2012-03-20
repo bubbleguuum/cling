@@ -119,18 +119,20 @@ public class RetrieveRemoteDescriptors implements Runnable {
     	}
     	
     	StreamRequestMessage deviceDescRetrievalMsg;
-
+    	StreamResponseMessage deviceDescMsg;
     	try {
     		deviceDescRetrievalMsg =
-                new StreamRequestMessage(UpnpRequest.Method.GET, rd.getIdentity().getDescriptorURL());
+    				new StreamRequestMessage(UpnpRequest.Method.GET, rd.getIdentity().getDescriptorURL());
+
+    		log.fine("Sending device descriptor retrieval message: " + deviceDescRetrievalMsg);
+    		deviceDescMsg = getUpnpService().getRouter().send(deviceDescRetrievalMsg);
     	} catch(IllegalArgumentException e) {
-    		// UpnpRequest constructor can throw IllegalArgumentException on invalid URI
-            log.warning("Device descriptor retrieval failed: " + e.getMessage());
-            return ;
+    		// UpnpRequest constructor can throw IllegalArgumentException on invalid URI in StreamRequestMessage constructor
+    		// can also be thrown by send() by apache http client on blank URI.
+    		log.warning("Device descriptor retrieval failed: " + e.getMessage() + ", descriptor URL: " + rd.getIdentity().getDescriptorURL());
+    		return ;
     	}
 
-        log.fine("Sending device descriptor retrieval message: " + deviceDescRetrievalMsg);
-        StreamResponseMessage deviceDescMsg = getUpnpService().getRouter().send(deviceDescRetrievalMsg);
 
         if (deviceDescMsg == null) {
             log.warning("Device descriptor retrieval failed, no response: " + rd.getIdentity().getDescriptorURL());
