@@ -34,8 +34,6 @@ import org.fourthline.cling.model.types.UDN;
  */
 public class ProxyLocalDevice extends LocalDevice {
 
-	// for bridged remote devices
-	UDN _bridgedUdn;
 	Endpoint _endpoint;
 	
     public ProxyLocalDevice(ProxyDeviceIdentity identity) throws ValidationException {
@@ -65,14 +63,6 @@ public class ProxyLocalDevice extends LocalDevice {
         );
     }
 
-    public UDN getBridgedUdn() {
-    	return _bridgedUdn;
-}
-    
-    public void setBridgedUdn(UDN udn) {
-    	_bridgedUdn = udn;
-    }
-    
     public void setEndpoint(Endpoint endpoint) {
     	_endpoint = endpoint;
 	}
