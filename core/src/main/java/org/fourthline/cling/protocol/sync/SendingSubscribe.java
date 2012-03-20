@@ -71,9 +71,11 @@ public class SendingSubscribe extends SendingSync<OutgoingSubscribeRequestMessag
                 upnpService.getConfiguration().getNamespace()
         );
         
+        /*
         for(URL url : urls) {
         	log.info("callback URL: " + url);
         }
+        */
 
         this.subscription = subscription;
     }
