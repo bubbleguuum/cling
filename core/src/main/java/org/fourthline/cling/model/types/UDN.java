@@ -104,7 +104,7 @@ public class UDN {
                 systemSalt.append(new String(ModelUtil.getFirstNetworkInterfaceHardwareAddress()));
             } catch (Throwable ex1) {
                 // Ignore, we did everything we can
-            	// catch Throwable so we catch  java.lang.NoSuchMethodError on Android because NetworkInterface.isLoopback() is'nt implemented 
+            	// NetworkInterface.isLoopback() called in getFirstNetworkInterfaceHardwareAddress() is implemented only since Android API 9 
             }
 
         }
