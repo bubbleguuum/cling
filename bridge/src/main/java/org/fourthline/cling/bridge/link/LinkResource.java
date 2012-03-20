@@ -81,13 +81,15 @@ public class LinkResource extends BridgeServerResource {
             }
 
 			// adding all bridged local devices not Proxy device
+			/*
 			for (LocalDevice localDevice : getUpnpService().getRegistry().getLocalDevices()) {
 				if (localDevice instanceof ProxyLocalDevice && getUpnpService().getConfiguration().isBridgedDevice(localDevice)) {
 					log.fine("Skipping proxy, not announcing to any endpoints: " + localDevice);
 					continue;
                 }
 				devices.add(deviceToHashMap(localDevice));
-                }
+            }
+            */
 
 			response.entity(JsonScripts.buildJsonScript(container));
 
