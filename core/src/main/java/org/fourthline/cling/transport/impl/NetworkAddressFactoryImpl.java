@@ -170,7 +170,8 @@ public class NetworkAddressFactoryImpl implements NetworkAddressFactory {
             NetworkInterface iface = NetworkInterface.getByInetAddress(inetAddress);
             return iface != null ? iface.getHardwareAddress() : null;
         } catch (SocketException ex) {
-            throw new RuntimeException(ex);
+        	log.warning("cannot get hardware address: " + inetAddress.getHostAddress() + ": " + ex);
+        	return null;
         }
     }
 
@@ -443,7 +444,9 @@ public class NetworkAddressFactoryImpl implements NetworkAddressFactory {
 
     protected void displayInterfaceInformation(NetworkInterface netint) throws SocketException {
         log.info(String.format("Display name: %s", netint.getDisplayName()));
-        log.info(String.format("Parent Info:%s", netint.getParent()));
+        if(netint.getParent() != null) {
+        	log.info(String.format("Parent Info:%s", netint.getParent()));
+        }
         log.info(String.format("Name: %s", netint.getName()));
 
         Enumeration<InetAddress> inetAddresses = netint.getInetAddresses();
