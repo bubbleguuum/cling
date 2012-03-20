@@ -29,6 +29,7 @@ import org.fourthline.cling.binding.xml.ServiceDescriptorBinder;
 import org.fourthline.cling.binding.xml.UDA10DeviceDescriptorBinderSAXImpl;
 import org.fourthline.cling.binding.xml.UDA10ServiceDescriptorBinderSAXImpl;
 import org.fourthline.cling.model.ExpirationDetails;
+import org.fourthline.cling.model.ServerClientTokens;
 import org.fourthline.cling.model.action.ActionInvocation;
 import org.fourthline.cling.transport.Router;
 import org.fourthline.cling.transport.impl.DatagramIOConfigurationImpl;
@@ -47,6 +48,7 @@ import org.fourthline.cling.transport.spi.StreamClient;
 import org.fourthline.cling.transport.spi.StreamServer;
 
 import android.content.Context;
+import android.os.Build;
 
 import com.bubblesoft.org.apache.http.params.CoreConnectionPNames;
 
@@ -167,32 +169,42 @@ public class AndroidUpnpServiceConfiguration extends DefaultUpnpServiceConfigura
 		};
 	}
 
+	class MyStreamClientConfigurationImpl extends StreamClientConfigurationImpl {
+		
+		@Override
+		public boolean getStaleCheckingEnabled() {
+			// comment from AndroidHttpClient.java:
+			//
+			// Turn off stale checking.  Our connections break all the time anyway,
+			// and it's not worth it to pay the penalty of checking every time.
+			return false;
+		}
+		
+		@Override
+		public int getRequestRetryCount() {
+			return 3;
+		}
+		
+
+		@Override
+		public String getUserAgentValue(int majorVersion, int minorVersion) {
+			if(userAgent != null) return userAgent;
+			
+			// Synology NAS requires User-Agent to contain "Android" to return DLNA protocolInfo required to stream to Samsung TV 
+			// see: http://two-play.com/forums/viewtopic.php?f=6&t=81
+			
+			ServerClientTokens tokens = new ServerClientTokens(majorVersion, minorVersion);
+			tokens.setOsName("Android");
+			tokens.setOsVersion(Build.VERSION.RELEASE);
+			return tokens.toString();
+			
+		}
+	}
+	
 
 	@Override
 	public StreamClient createStreamClient() {
-		return new StreamClientImpl(new StreamClientConfigurationImpl() {
-			
-			@Override
-			public boolean getStaleCheckingEnabled() {
-				// comment from AndroidHttpClient.java:
-				//
-				// Turn off stale checking.  Our connections break all the time anyway,
-				// and it's not worth it to pay the penalty of checking every time.
-				return false;
-			}
-			
-			@Override
-			public int getRequestRetryCount() {
-				return 3;
-			}
-
-			@Override
-			public String getUserAgentValue(int majorVersion, int minorVersion) {
-				if(userAgent == null) return super.getUserAgentValue(majorVersion, minorVersion);
-				return userAgent;
-			}
-		});
-
+		return new StreamClientImpl(new MyStreamClientConfigurationImpl());
 	}
 	
 	@Override
