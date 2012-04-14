@@ -191,6 +191,13 @@ public class HttpServerConnectionUpnpStream extends UpnpStream {
             } else {
             	requestMessage.setLocalAddress(localAddress.getHostAddress());
             }
+            
+            InetAddress remoteAddress = ((DefaultHttpServerConnection)connection).getRemoteAddress();
+            if(remoteAddress == null) {
+            	log.warning("got HTTP request without Remote Address"); 
+            } else {
+            	requestMessage.setRemoteAddress(remoteAddress.getHostAddress());
+            }
 
             // Body
             if (httpRequest instanceof HttpEntityEnclosingRequest) {

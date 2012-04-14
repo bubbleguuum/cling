@@ -28,6 +28,7 @@ import java.net.URL;
 public class StreamRequestMessage extends UpnpMessage<UpnpRequest> {
 	
 	private String localAddress;
+	private String remoteAddress;
 
     public StreamRequestMessage(StreamRequestMessage source) {
         super(source);
@@ -85,6 +86,14 @@ public class StreamRequestMessage extends UpnpMessage<UpnpRequest> {
 	
 	public String getLocalAddress() {
 		return localAddress;
+	}
+	
+	public void setRemoteAddress(String remoteAddress) {
+		this.remoteAddress = remoteAddress;
+	}
+	
+	public String getRemoteAddress() {
+		return remoteAddress;
 	}
     
 }

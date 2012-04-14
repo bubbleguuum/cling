@@ -115,6 +115,7 @@ public class ReceivingAction extends ReceivingSync<StreamRequestMessage, StreamR
             IncomingActionRequestMessage requestMessage =
                     new IncomingActionRequestMessage(getInputMessage(), resource.getModel());
             requestMessage.setLocalAddress(getInputMessage().getLocalAddress());
+            requestMessage.setRemoteAddress(getInputMessage().getRemoteAddress());
 
             // Preserve message in a TL
             requestThreadLocal.set(requestMessage);
@@ -128,6 +129,7 @@ public class ReceivingAction extends ReceivingSync<StreamRequestMessage, StreamR
 
             log.finer("Created incoming action request message: " + requestMessage);
             invocation = new ActionInvocation(requestMessage.getAction(), userAgent);
+
 
             // Throws UnsupportedDataException if the body can't be read
             log.fine("Reading body of request message");

@@ -85,6 +85,13 @@ public class HttpExchangeUpnpStream extends UpnpStream {
             // Headers
             requestMessage.setHeaders(new UpnpHeaders(getHttpExchange().getRequestHeaders()));
 
+            if(getHttpExchange().getLocalAddress().getAddress() != null) {
+            	requestMessage.setLocalAddress(getHttpExchange().getLocalAddress().getAddress().getHostAddress());
+            }
+            if(getHttpExchange().getRemoteAddress().getAddress() != null) {
+            	requestMessage.setRemoteAddress(getHttpExchange().getRemoteAddress().getAddress().getHostAddress());
+            }
+            
             // Body
             byte[] bodyBytes;
             InputStream is = null;
