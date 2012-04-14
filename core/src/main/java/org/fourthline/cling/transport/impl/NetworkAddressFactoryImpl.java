@@ -169,7 +169,8 @@ public class NetworkAddressFactoryImpl implements NetworkAddressFactory {
         try {
             NetworkInterface iface = NetworkInterface.getByInetAddress(inetAddress);
             return iface != null ? iface.getHardwareAddress() : null;
-        } catch (SocketException ex) {
+        } catch (Throwable ex) {
+        	// On Win32 seen: java.lang.Error: IP Helper Library GetIpAddrTable function failed
         	log.warning("cannot get hardware address: " + inetAddress.getHostAddress() + ": " + ex);
         	return null;
         }
