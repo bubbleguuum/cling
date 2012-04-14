@@ -181,6 +181,10 @@ public class ActionInvocation<S extends Service> {
 		return userAgent;
 	}
 	
+	public void setUserAgent(String userAgent) {
+		this.userAgent = userAgent;
+	}
+	
 	public String getRemoteAddr() {
 		return remoteAddr;
 	}
@@ -188,4 +192,5 @@ public class ActionInvocation<S extends Service> {
 	public void setRemoteAddr(String remoteAddr) {
 		this.remoteAddr = remoteAddr;
 	}
+
 }
