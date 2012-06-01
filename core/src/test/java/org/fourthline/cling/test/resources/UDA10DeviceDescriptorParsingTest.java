@@ -17,11 +17,15 @@
 
 package org.fourthline.cling.test.resources;
 
-import org.fourthline.cling.model.meta.LocalDevice;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertTrue;
+
 import org.fourthline.cling.binding.xml.DeviceDescriptorBinder;
+import org.fourthline.cling.binding.xml.RecoverUDA10DeviceDescriptorBinderSAXImpl;
 import org.fourthline.cling.binding.xml.UDA10DeviceDescriptorBinderImpl;
 import org.fourthline.cling.binding.xml.UDA10DeviceDescriptorBinderSAXImpl;
 import org.fourthline.cling.mock.MockUpnpService;
+import org.fourthline.cling.model.meta.LocalDevice;
 import org.fourthline.cling.model.meta.RemoteDevice;
 import org.fourthline.cling.model.profile.ControlPointInfo;
 import org.fourthline.cling.test.data.SampleData;
@@ -29,11 +33,27 @@ import org.fourthline.cling.test.data.SampleDeviceRoot;
 import org.seamless.util.io.IO;
 import org.testng.annotations.Test;
 
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertTrue;
-
 
 public class UDA10DeviceDescriptorParsingTest {
+	
+	@Test
+	public void readRecoverUDA10DescriptorSAX_ushare() throws Exception {
+
+		DeviceDescriptorBinder binder = new RecoverUDA10DeviceDescriptorBinderSAXImpl();
+
+		RemoteDevice device = new RemoteDevice(SampleData.createRemoteDeviceIdentity());
+		binder.describe(device, IO.readLines(getClass().getResourceAsStream("/brokenxml/devicedesc/ushare.xml")));
+	}
+	
+	@Test
+	public void readRecoverUDA10DescriptorSAX_MultipleNSMissing() throws Exception {
+
+		DeviceDescriptorBinder binder = new RecoverUDA10DeviceDescriptorBinderSAXImpl();
+
+		RemoteDevice device = new RemoteDevice(SampleData.createRemoteDeviceIdentity());
+		binder.describe(device, IO.readLines(getClass().getResourceAsStream("/brokenxml/devicedesc/multiplensmissing.xml")));
+	}
+
 
     @Test
     public void readUDA10DescriptorDOM() throws Exception {
