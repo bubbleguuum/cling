@@ -194,6 +194,10 @@ public class ReceivingAction extends ReceivingSync<StreamRequestMessage, StreamR
     public static IncomingActionRequestMessage getRequestMessage() {
         return requestThreadLocal.get();
     }
+    
+    public static boolean isRemote() {
+    	return getRequestMessage() != null;
+    }
 
     public static UpnpHeaders getExtraResponseHeaders() {
         return extraResponseHeadersThreadLocal.get();
