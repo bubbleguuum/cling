@@ -17,6 +17,8 @@
 
 package org.fourthline.cling.model.action;
 
+import org.apache.commons.lang3.text.WordUtils;
+import org.fourthline.cling.model.ModelUtil;
 import org.fourthline.cling.model.meta.ActionArgument;
 import org.fourthline.cling.model.meta.LocalService;
 import org.fourthline.cling.model.state.StateVariableAccessor;
@@ -54,6 +56,11 @@ public class MethodActionExecutor extends AbstractActionExecutor {
 
     @Override
     protected void execute(ActionInvocation<LocalService> actionInvocation, Object serviceImpl) throws Exception {
+        
+    	if(!"time".equals(method.getName()) && !ModelUtil.ANDROID_RUNTIME) {
+    		log.fine(String.format("%s: Action: %s", actionInvocation.getAction().getService().getDevice().getDetails().getFriendlyName(),  WordUtils.capitalize(method.getName())));
+    	}
+    	
 
         // Find the "real" parameters of the method we want to call, and create arguments
         Object[] inputArgumentValues = createInputArgumentValues(actionInvocation, method);
@@ -66,7 +73,7 @@ public class MethodActionExecutor extends AbstractActionExecutor {
         }
 
         boolean isVoid = method.getReturnType().equals(Void.TYPE);
-
+        
         log.fine("Calling local service method with output arguments: " + method);
         Object result;
         boolean isArrayResultProcessed = true;
