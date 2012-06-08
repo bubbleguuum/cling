@@ -33,7 +33,7 @@ public class RecoverUDA10DeviceDescriptorBinderSAXImpl extends UDA10DeviceDescri
 
 					Throwable cause = e.getCause();
 
-					if(!(e.getCause() instanceof  org.seamless.xml.ParserException)) throw e;
+					if(!(cause instanceof  org.seamless.xml.ParserException)) throw e;
 					
 					String message = cause.getMessage();
 					if(message == null) throw e;
