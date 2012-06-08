@@ -35,7 +35,7 @@ import org.fourthline.cling.transport.spi.StreamServer;
 import org.fourthline.cling.transport.spi.StreamServerConfiguration;
 
 import com.bubblesoft.org.apache.http.client.HttpClient;
-import com.bubblesoft.org.apache.http.impl.client.ContentEncodingHttpClient;
+import com.bubblesoft.org.apache.http.impl.client.DefaultHttpClient;
 import com.bubblesoft.org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager;
 import com.bubblesoft.org.apache.http.params.BasicHttpParams;
 import com.bubblesoft.org.apache.http.params.HttpConnectionParams;
@@ -86,8 +86,8 @@ public class BridgeUpnpServiceConfiguration extends DefaultUpnpServiceConfigurat
         	clientConnectionManager.setMaxTotal(streamConfiguration.getMaxTotalConnections());
             clientConnectionManager.setDefaultMaxPerRoute(100);
         	
-        	httpClient = new ContentEncodingHttpClient(clientConnectionManager, params);
-
+            // do not request zipped response as Multicast2Unicast sends buggy data otherwise
+            httpClient = new DefaultHttpClient(clientConnectionManager, params);
         }
         
         this.httpClient = httpClient;
