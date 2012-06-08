@@ -17,18 +17,12 @@
 
 package org.fourthline.cling.model.gena;
 
-import org.fourthline.cling.model.Constants;
-import org.fourthline.cling.model.ServiceManager;
-import org.fourthline.cling.model.message.header.SubscriptionIdHeader;
-import org.fourthline.cling.model.meta.LocalService;
-import org.fourthline.cling.model.meta.StateVariable;
-import org.fourthline.cling.model.state.StateVariableValue;
-import org.fourthline.cling.model.types.UnsignedIntegerFourBytes;
-import org.seamless.util.Exceptions;
-
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
@@ -39,6 +33,15 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import org.fourthline.cling.model.Constants;
+import org.fourthline.cling.model.ServiceManager;
+import org.fourthline.cling.model.message.header.SubscriptionIdHeader;
+import org.fourthline.cling.model.meta.LocalService;
+import org.fourthline.cling.model.meta.StateVariable;
+import org.fourthline.cling.model.state.StateVariableValue;
+import org.fourthline.cling.model.types.UnsignedIntegerFourBytes;
+import org.seamless.util.Exceptions;
 
 /**
  * An incoming subscription to a local service.
@@ -67,7 +70,9 @@ public abstract class LocalGENASubscription extends GENASubscription<LocalServic
 
     protected LocalGENASubscription(LocalService service, List<URL> callbackURLs) throws Exception {
         super(service);
+        
         this.callbackURLs = callbackURLs;
+        filterCallbackURLs();
     }
 
     public LocalGENASubscription(LocalService service,
@@ -101,6 +106,48 @@ public abstract class LocalGENASubscription extends GENASubscription<LocalServic
         this.subscriptionId = SubscriptionIdHeader.PREFIX + UUID.randomUUID();
         this.currentSequence = new UnsignedIntegerFourBytes(0);
         this.callbackURLs = callbackURLs;
+        filterCallbackURLs();
+    }
+    
+    void filterCallbackURLs() throws Exception  {
+    	
+    	/* Check that callback URLs are valid and discard invalid ones
+    	 This is required to avoid URL.toURI() failing later on, in rare cases. 
+    	 Here is a bogus device advertising an ipv6 address, causing following stack trace without filtering:
+    	
+    	Java.net.URISyntaxException: Invalid % sequence: %wl in authority at index 32: http://[fe80::208:caff:fec4:824e%wlan0]:8485/eventSub
+    		at libcore.net.UriCodec.validate(UriCodec.java:58)
+    		at java.net.URI.parseURI(URI.java:394)
+    		at java.net.URI.<init>(URI.java:204)
+    		at java.net.URL.toURI(URL.java:497)
+    		at org.fourthline.cling.model.message.UpnpRequest.<init>(SourceFile:82)
+    		at org.fourthline.cling.model.message.gena.OutgoingEventRequestMessage.<init>(SourceFile:48)
+    		at org.fourthline.cling.model.message.gena.OutgoingEventRequestMessage.<init>(SourceFile:62)
+    		at org.fourthline.cling.protocol.sync.SendingEvent.<init>(SourceFile:60)
+    		at org.fourthline.cling.protocol.ProtocolFactoryImpl.createSendingEvent(SourceFile:213)
+    		at org.fourthline.cling.protocol.sync.ReceivingSubscribe.responseSent(SourceFile:182)
+    		at org.fourthline.cling.transport.spi.UpnpStream.responseSent(SourceFile:105)
+
+    	 */
+    	
+    	if(callbackURLs.isEmpty()) return ;
+    	
+    	List<URL> invalidCallbackURLs = new ArrayList<URL>();
+    	for(URL callbackURL : callbackURLs) {
+    		try {
+				callbackURL.toURI();
+			} catch (URISyntaxException e) {
+				log.warning("discarding invalid callback URL: " + callbackURL);
+				invalidCallbackURLs.add(callbackURL);
+			}
+    	}
+    	
+    	// remove invalid URLs
+    	for(URL callbackURL : invalidCallbackURLs) {
+    		callbackURLs.remove(callbackURL);
+    	}
+    	
+    	if(callbackURLs.isEmpty()) throw new Exception("No valid callback URL found");
     }
 
     synchronized public List<URL> getCallbackURLs() {
