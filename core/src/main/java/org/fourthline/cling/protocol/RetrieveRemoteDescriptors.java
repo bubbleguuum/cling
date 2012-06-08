@@ -124,7 +124,7 @@ public class RetrieveRemoteDescriptors implements Runnable {
     		deviceDescRetrievalMsg =
     				new StreamRequestMessage(UpnpRequest.Method.GET, rd.getIdentity().getDescriptorURL());
 
-    		log.fine("Sending device descriptor retrieval message: " + deviceDescRetrievalMsg);
+    		log.info("Sending device descriptor retrieval message: " + deviceDescRetrievalMsg);
     		deviceDescMsg = getUpnpService().getRouter().send(deviceDescRetrievalMsg);
     	} catch(IllegalArgumentException e) {
     		// UpnpRequest constructor can throw IllegalArgumentException on invalid URI in StreamRequestMessage constructor
