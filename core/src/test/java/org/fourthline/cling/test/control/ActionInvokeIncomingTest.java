@@ -284,7 +284,7 @@ public class ActionInvokeIncomingTest {
         ActionException ex = responseInvocation.getFailure();
         assert ex != null;
 
-        assertEquals(ex.getMessage(), ErrorCode.ACTION_FAILED.getDescription() + ". Action method invocation failed: Something is wrong.");
+        assertEquals(ex.getMessage(), ErrorCode.ACTION_FAILED.getDescription() + ". Something is wrong.");
 
     }
 
