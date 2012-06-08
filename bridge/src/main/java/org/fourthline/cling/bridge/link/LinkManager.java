@@ -194,7 +194,7 @@ public class LinkManager {
                 );
             }
 
-			log.severe(body);
+			log.info(body);
 
 			LinkedHashMap container = JsonScripts.parseJsonScript(body);
 			if(container == null) {
