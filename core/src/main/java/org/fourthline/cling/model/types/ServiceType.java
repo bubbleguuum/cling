@@ -35,6 +35,9 @@ public class ServiceType {
 
     public static final Pattern PATTERN =
             Pattern.compile("urn:(" + Constants.REGEX_NAMESPACE + "):service:(" + Constants.REGEX_TYPE + "):([0-9]+).*");
+    
+    public static final Pattern BROKEN_PATTERN =
+            Pattern.compile("urn:(" + Constants.REGEX_NAMESPACE + "):serviceId:(" + Constants.REGEX_TYPE + "):([0-9]+).*");
 
     private String namespace;
     private String type;
@@ -94,7 +97,12 @@ public class ServiceType {
             if (matcher.matches()) {
                 return new ServiceType(matcher.group(1), matcher.group(2), Integer.valueOf(matcher.group(3)));
             } else {
-                throw new InvalidValueException("Can't parse service type string (namespace/type/version): " + s);
+            	matcher = ServiceType.BROKEN_PATTERN.matcher(s);
+            	if (matcher.matches()) {
+                    return new ServiceType(matcher.group(1), matcher.group(2), Integer.valueOf(matcher.group(3)));
+                } else {
+                	throw new InvalidValueException("Can't parse service type string (namespace/type/version): " + s);
+                }
             }
         }
         return serviceType;
