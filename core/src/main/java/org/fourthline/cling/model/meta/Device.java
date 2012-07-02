@@ -51,7 +51,7 @@ public abstract class Device<DI extends DeviceIdentity, D extends Device, S exte
     final private UDAVersion version;
     final private DeviceType type;
     final private DeviceDetails details;
-    final private Icon[] icons;
+    private Icon[] icons;
     final protected S[] services;
     final protected D[] embeddedDevices;
 
@@ -384,10 +384,24 @@ public abstract class Device<DI extends DeviceIdentity, D extends Device, S exte
             }
 
             if (hasIcons()) {
+            	
+            	List<Icon> validIcons = new ArrayList<Icon>();
                 for (Icon icon : getIcons()) {
-                    if (icon != null)
-                        errors.addAll(icon.validate());
+                    if (icon != null) {
+                    	List<ValidationError> iconErrors = icon.validate();
+                    	if(iconErrors.isEmpty()) {
+                    		validIcons.add(icon);
+                    	} else {
+                    		log.warning("validation error found in device icon, discarding icon: " + iconErrors);
+                    	}
+                    }
                 }
+
+                if(validIcons.size() != icons.length) {
+                	icons = new Icon[validIcons.size()];
+                	validIcons.toArray(icons);
+                }
+                
             }
 
             if (hasServices()) {
