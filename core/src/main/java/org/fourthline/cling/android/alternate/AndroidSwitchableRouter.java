@@ -251,10 +251,22 @@ public class AndroidSwitchableRouter extends SwitchableRouterImpl {
 		return true;
 	}
 
-	public void enableWiFi() {
+	public boolean enableWiFi() {
 		log.info("enabling WiFi...");
-		wifiManager.setWifiEnabled(true);
-
+		try {
+			return wifiManager.setWifiEnabled(true);
+		} catch(Throwable e) {
+			
+			// workaround (HTC One X, 4.0.3)
+			//java.lang.SecurityException: Permission Denial: writing com.android.providers.settings.SettingsProvider uri content://settings/system from pid=4691, uid=10226 requires android.permission.WRITE_SETTINGS
+			//	at android.os.Parcel.readException(Parcel.java:1332)
+			//	at android.os.Parcel.readException(Parcel.java:1286)
+			//	at android.net.wifi.IWifiManager$Stub$Proxy.setWifiEnabled(IWifiManager.java:1115)
+			//	at android.net.wifi.WifiManager.setWifiEnabled(WifiManager.java:946)
+			
+			log.warning("setWifiEnabled failed: " + e);
+			return false;
+		}
 	}
 
 	@Override
