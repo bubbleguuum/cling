@@ -46,7 +46,16 @@ public interface Constants {
     // TODO: UPNP VIOLATION: Intel UPnP Tools send dots in the service identifier suffix, match that...
 
     public static final String REGEX_NAMESPACE = "[a-zA-Z0-9\\-\\.]+";
-    public static final String REGEX_TYPE = "[a-zA-Z_0-9\\-]{1,64}";
+
+    // Hack required so EyeTV Netstream does not fail device validation
+    // This device use non compliant device and service names:
+    //
+    // urn:schemas-microsoft-com:device:tv:pbda:1
+    // urn:schemas-microsoft-com:service:pbda:tuner:1
+    //
+    // authorizing symbol ':' in the regexp make it pass without side effects 
+    //public static final String REGEX_TYPE = "[a-zA-Z_0-9\\-]{1,64}";
+    public static final String REGEX_TYPE = "[a-zA-Z_0-9:\\-]{1,64}";
     public static final String REGEX_ID = "[a-zA-Z_0-9\\-:\\.]{1,64}";
 
     /*
