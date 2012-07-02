@@ -525,7 +525,17 @@ public class UDA10DeviceDescriptorBinderImpl implements DeviceDescriptorBinder {
 
         try {
             return URI.create(uri);
-        } catch (IllegalArgumentException ex) {
+        } catch (Throwable ex) {
+        	// catch Throwable because on Android 2.2, parsing some clown invalid URI like "http://..."  gives:
+        	//        	java.lang.NullPointerException
+        	//        	 	at java.net.URI$Helper.isValidDomainName(URI.java:631)
+        	//        	 	at java.net.URI$Helper.isValidHost(URI.java:595)
+        	//        	 	at java.net.URI$Helper.parseAuthority(URI.java:544)
+        	//        	 	at java.net.URI$Helper.parseURI(URI.java:404)
+        	//        	 	at java.net.URI$Helper.access$100(URI.java:302)
+        	//        	 	at java.net.URI.<init>(URI.java:87)
+        	//        		at java.net.URI.create(URI.java:968)
+        	
             log.fine("Illegal URI, trying with ./ prefix: " + Exceptions.unwrap(ex));
             // Ignore
         }

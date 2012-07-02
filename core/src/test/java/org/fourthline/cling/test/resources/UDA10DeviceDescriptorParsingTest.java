@@ -36,6 +36,104 @@ import org.testng.annotations.Test;
 
 public class UDA10DeviceDescriptorParsingTest {
 	
+	
+	/*  missing event sub URL
+	@Test
+	public void readRecoverUDA10DescriptorSAXPMS() throws Exception {
+
+		DeviceDescriptorBinder binder = new RecoverUDA10DeviceDescriptorBinderSAXImpl();
+
+		RemoteDevice device = new RemoteDevice(SampleData.createRemoteDeviceIdentity());
+		binder.describe(device, IO.readLines(getClass().getResourceAsStream("/brokenxml/devicedesc/pms.xml")));
+	}
+	*/
+	
+	/* empty deviceType
+	@Test
+	public void readRecoverUDA10DescriptorSAX_awox() throws Exception {
+
+		DeviceDescriptorBinder binder = new RecoverUDA10DeviceDescriptorBinderSAXImpl();
+
+		RemoteDevice device = new RemoteDevice(SampleData.createRemoteDeviceIdentity());
+		binder.describe(device, IO.readLines(getClass().getResourceAsStream("/brokenxml/devicedesc/awox.xml")));
+	}
+	*/
+
+	/* invalid and unrecoverable service ID
+
+	@Test
+	public void readRecoverUDA10DescriptorSAX_Philips() throws Exception {
+
+		DeviceDescriptorBinder binder = new RecoverUDA10DeviceDescriptorBinderSAXImpl();
+
+		RemoteDevice device = new RemoteDevice(SampleData.createRemoteDeviceIdentity());
+		binder.describe(device, IO.readLines(getClass().getResourceAsStream("/brokenxml/devicedesc/philips.xml")));
+	}
+	*/
+	
+	@Test
+	public void readRecoverUDA10DescriptorSAX_Ceton_InfiniTV() throws Exception {
+
+		DeviceDescriptorBinder binder = new RecoverUDA10DeviceDescriptorBinderSAXImpl();
+
+		RemoteDevice device = new RemoteDevice(SampleData.createRemoteDeviceIdentity());
+		binder.describe(device, IO.readLines(getClass().getResourceAsStream("/brokenxml/devicedesc/ceton_infinitv.xml")));
+	}
+	
+	@Test
+	public void readRecoverUDA10DescriptorSAX_TPG() throws Exception {
+
+		DeviceDescriptorBinder binder = new RecoverUDA10DeviceDescriptorBinderSAXImpl();
+
+		RemoteDevice device = new RemoteDevice(SampleData.createRemoteDeviceIdentity());
+		binder.describe(device, IO.readLines(getClass().getResourceAsStream("/brokenxml/devicedesc/tpg.xml")));
+	}
+	
+	@Test
+	public void readRecoverUDA10DescriptorSAX_LG() throws Exception {
+
+		DeviceDescriptorBinder binder = new RecoverUDA10DeviceDescriptorBinderSAXImpl();
+
+		RemoteDevice device = new RemoteDevice(SampleData.createRemoteDeviceIdentity());
+		binder.describe(device, IO.readLines(getClass().getResourceAsStream("/brokenxml/devicedesc/lg.xml")));
+	}
+	
+	@Test
+	public void readRecoverUDA10DescriptorSAX_Zyxel_MiViewTV() throws Exception {
+
+		DeviceDescriptorBinder binder = new RecoverUDA10DeviceDescriptorBinderSAXImpl();
+
+		RemoteDevice device = new RemoteDevice(SampleData.createRemoteDeviceIdentity());
+		binder.describe(device, IO.readLines(getClass().getResourceAsStream("/brokenxml/devicedesc/zyxel_miviewtv.xml")));
+	}
+	
+	@Test
+	public void readRecoverUDA10DescriptorSAX_ATB_MiViewTV() throws Exception {
+
+		DeviceDescriptorBinder binder = new RecoverUDA10DeviceDescriptorBinderSAXImpl();
+
+		RemoteDevice device = new RemoteDevice(SampleData.createRemoteDeviceIdentity());
+		binder.describe(device, IO.readLines(getClass().getResourceAsStream("/brokenxml/devicedesc/atb_miviewtv.xml")));
+	}
+	
+	@Test
+	public void readRecoverUDA10DescriptorSAX_EyeTVNetStreamSat() throws Exception {
+
+		DeviceDescriptorBinder binder = new RecoverUDA10DeviceDescriptorBinderSAXImpl();
+
+		RemoteDevice device = new RemoteDevice(SampleData.createRemoteDeviceIdentity());
+		binder.describe(device, IO.readLines(getClass().getResourceAsStream("/brokenxml/devicedesc/eyetv_netstream_sat.xml")));
+	}
+	
+	@Test
+	public void readRecoverUDA10DescriptorSAX_DoubleTwist() throws Exception {
+
+		DeviceDescriptorBinder binder = new RecoverUDA10DeviceDescriptorBinderSAXImpl();
+
+		RemoteDevice device = new RemoteDevice(SampleData.createRemoteDeviceIdentity());
+		binder.describe(device, IO.readLines(getClass().getResourceAsStream("/brokenxml/devicedesc/doubletwist.xml")));
+	}
+	
 	@Test
 	public void readRecoverUDA10DescriptorSAX_ushare() throws Exception {
 
