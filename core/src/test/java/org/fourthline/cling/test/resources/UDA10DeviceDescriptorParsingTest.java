@@ -71,6 +71,26 @@ public class UDA10DeviceDescriptorParsingTest {
 	}
 	*/
 	
+	
+	@Test
+	public void readRecoverUDA10DescriptorSAX_Aquos_BD() throws Exception {
+
+		DeviceDescriptorBinder binder = new RecoverUDA10DeviceDescriptorBinderSAXImpl();
+
+		RemoteDevice device = new RemoteDevice(SampleData.createRemoteDeviceIdentity());
+		binder.describe(device, IO.readLines(getClass().getResourceAsStream("/brokenxml/devicedesc/perfectwave.xml")));
+	}
+	
+	@Test
+	public void readRecoverUDA10DescriptorSAX_PerfectWave() throws Exception {
+
+		DeviceDescriptorBinder binder = new RecoverUDA10DeviceDescriptorBinderSAXImpl();
+
+		RemoteDevice device = new RemoteDevice(SampleData.createRemoteDeviceIdentity());
+		binder.describe(device, IO.readLines(getClass().getResourceAsStream("/brokenxml/devicedesc/perfectwave.xml")));
+	}
+	
+	
 	@Test
 	public void readRecoverUDA10DescriptorSAX_Ceton_InfiniTV() throws Exception {
 
