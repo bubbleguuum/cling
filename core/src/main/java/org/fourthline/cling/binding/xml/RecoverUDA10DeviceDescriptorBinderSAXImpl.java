@@ -6,6 +6,7 @@ import java.util.regex.Pattern;
 
 import org.fourthline.cling.model.ValidationException;
 import org.fourthline.cling.model.meta.Device;
+import org.seamless.xml.XmlPullParserUtils;
 
 public class RecoverUDA10DeviceDescriptorBinderSAXImpl extends UDA10DeviceDescriptorBinderSAXImpl {
 
@@ -84,6 +85,8 @@ public class RecoverUDA10DeviceDescriptorBinderSAXImpl extends UDA10DeviceDescri
 						firstException = e;
 					}
 					
+					 if (descriptorXml == null || descriptorXml.length() == 0) throw e;
+					
 					String fixedXml;
 					
 					fixedXml = fixMissingNamespace(descriptorXml, e);
@@ -94,6 +97,12 @@ public class RecoverUDA10DeviceDescriptorBinderSAXImpl extends UDA10DeviceDescri
 					
 					fixedXml = fixGarbageTrailingChars(descriptorXml, e);
 					if(fixedXml != null) {
+						descriptorXml = fixedXml;
+						continue;
+					}
+					
+					fixedXml = XmlPullParserUtils.fixXMLEntities(descriptorXml);
+					if(!fixedXml.equals(descriptorXml)) {
 						descriptorXml = fixedXml;
 						continue;
 					}
