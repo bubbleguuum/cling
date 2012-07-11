@@ -152,24 +152,25 @@ public class Icon implements Validatable {
         }
 
         if (getUri() == null) {
-            errors.add(new ValidationError(
-                    getClass(),
-                    "uri",
-                    "URL is required"
-            ));
-        }
-        try {
-            URL testURI = getUri().toURL();
-            if (testURI == null)
-                throw new MalformedURLException();
-        } catch (MalformedURLException ex) {
-            errors.add(new ValidationError(
-                    getClass(),
-                    "uri",
-                    "URL must be valid: " + ex.getMessage())
-            );
-        } catch (IllegalArgumentException ex) {
-            // Relative URI is fine here!
+        	errors.add(new ValidationError(
+        			getClass(),
+        			"uri",
+        			"URL is required"
+        			));
+        } else {
+        	try {
+        		URL testURI = getUri().toURL();
+        		if (testURI == null)
+        			throw new MalformedURLException();
+        	} catch (MalformedURLException ex) {
+        		errors.add(new ValidationError(
+        				getClass(),
+        				"uri",
+        				"URL must be valid: " + ex.getMessage())
+        				);
+        	} catch (IllegalArgumentException ex) {
+        		// Relative URI is fine here!
+        	}
         }
 
         return errors;
