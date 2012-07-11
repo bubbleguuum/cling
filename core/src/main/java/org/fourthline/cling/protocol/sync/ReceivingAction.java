@@ -202,4 +202,14 @@ public class ReceivingAction extends ReceivingSync<StreamRequestMessage, StreamR
     public static UpnpHeaders getExtraResponseHeaders() {
         return extraResponseHeadersThreadLocal.get();
     }
+    
+	
+    public static boolean isWMPRequest() {
+		return isRemote() &&  getRequestMessage().isWMPRequest();
+	}
+	
+    public static boolean isXbox360Request() {
+		return isRemote() &&  getRequestMessage().isXbox360Request();
+	}
+
 }
