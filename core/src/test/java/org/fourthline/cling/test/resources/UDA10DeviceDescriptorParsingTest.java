@@ -69,8 +69,80 @@ public class UDA10DeviceDescriptorParsingTest {
 		RemoteDevice device = new RemoteDevice(SampleData.createRemoteDeviceIdentity());
 		binder.describe(device, IO.readLines(getClass().getResourceAsStream("/brokenxml/devicedesc/philips.xml")));
 	}
-	*/
+	@Test
+	public void readRecoverUDA10DescriptorSAX_Kodak() throws Exception {
+		
+		//<icon></icon> giving NPE
+
+		DeviceDescriptorBinder binder = new RecoverUDA10DeviceDescriptorBinderSAXImpl();
+
+		RemoteDevice device = new RemoteDevice(SampleData.createRemoteDeviceIdentity());
+		binder.describe(device, IO.readLines(getClass().getResourceAsStream("/brokenxml/devicedesc/kodak.xml")));
+	}
 	
+	@Test
+	public void readRecoverUDA10DescriptorSAX_UMS() throws Exception {
+		// missing event sub URL
+		DeviceDescriptorBinder binder = new RecoverUDA10DeviceDescriptorBinderSAXImpl();
+
+		RemoteDevice device = new RemoteDevice(SampleData.createRemoteDeviceIdentity());
+		binder.describe(device, IO.readLines(getClass().getResourceAsStream("/brokenxml/devicedesc/ums.xml")));
+	}
+	
+	*/
+
+	@Test
+	public void readRecoverUDA10DescriptorSAX_ReadyDLNA() throws Exception {
+		// badly encoded XML entities
+		
+		DeviceDescriptorBinder binder = new RecoverUDA10DeviceDescriptorBinderSAXImpl();
+
+		RemoteDevice device = new RemoteDevice(SampleData.createRemoteDeviceIdentity());
+		binder.describe(device, IO.readLines(getClass().getResourceAsStream("/brokenxml/devicedesc/readydlna.xml")));
+	}
+	
+	
+	
+	@Test
+	public void readRecoverUDA10DescriptorSAX_Plutinosoft() throws Exception {
+		
+		DeviceDescriptorBinder binder = new RecoverUDA10DeviceDescriptorBinderSAXImpl();
+
+		RemoteDevice device = new RemoteDevice(SampleData.createRemoteDeviceIdentity());
+		binder.describe(device, IO.readLines(getClass().getResourceAsStream("/brokenxml/devicedesc/plutinosoft.xml")));
+	}
+
+	
+	@Test
+	public void readRecoverUDA10DescriptorSAX_Escient() throws Exception {
+		
+		DeviceDescriptorBinder binder = new RecoverUDA10DeviceDescriptorBinderSAXImpl();
+
+		RemoteDevice device = new RemoteDevice(SampleData.createRemoteDeviceIdentity());
+		binder.describe(device, IO.readLines(getClass().getResourceAsStream("/brokenxml/devicedesc/escient.xml")));
+	}
+
+	
+	@Test
+	public void readRecoverUDA10DescriptorSAX_EyeCon() throws Exception {
+		
+		DeviceDescriptorBinder binder = new RecoverUDA10DeviceDescriptorBinderSAXImpl();
+
+		RemoteDevice device = new RemoteDevice(SampleData.createRemoteDeviceIdentity());
+		binder.describe(device, IO.readLines(getClass().getResourceAsStream("/brokenxml/devicedesc/eyecon.xml")));
+	}
+	
+	
+	@Test
+	public void readRecoverUDA10DescriptorSAX_Samsung() throws Exception {
+		
+		//<icon></icon> giving NPE
+
+		DeviceDescriptorBinder binder = new RecoverUDA10DeviceDescriptorBinderSAXImpl();
+
+		RemoteDevice device = new RemoteDevice(SampleData.createRemoteDeviceIdentity());
+		binder.describe(device, IO.readLines(getClass().getResourceAsStream("/brokenxml/devicedesc/samsung.xml")));
+	}
 	
 	@Test
 	public void readRecoverUDA10DescriptorSAX_Aquos_BD() throws Exception {
