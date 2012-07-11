@@ -38,7 +38,10 @@ public class ServiceId {
 	
 	public static final Pattern BROKEN_PATTERN =
             Pattern.compile("urn:(" + Constants.REGEX_NAMESPACE + "):service:(" + Constants.REGEX_ID+ ")"); // Note: 'service' vs. 'serviceId'
-
+	
+	public static final Pattern BROKEN_PATTERN_EYECON = 
+			Pattern.compile("urn:upnp-orgerviceId:urnchemas-upnp-orgervice:(" + Constants.REGEX_ID+ ")"); // talk about being broken...
+	
 	private String namespace;
 	private String id;
 
@@ -79,13 +82,16 @@ public class ServiceId {
 			if (matcher.matches()) {
 				return new ServiceId(matcher.group(1), matcher.group(2));
 			} else {
-				// hack for PS Audio Bridge which send a non compliant string
-				
 				matcher = ServiceId.BROKEN_PATTERN.matcher(s);
 				if (matcher.matches()) {
 					return new ServiceId(matcher.group(1), matcher.group(2));
 				} else {
-					throw new InvalidValueException("Can't parse Service ID string (namespace/id): " + s);
+					matcher = ServiceId.BROKEN_PATTERN_EYECON.matcher(s);
+					if (matcher.matches()) {
+						return new ServiceId(UDAServiceId.DEFAULT_NAMESPACE, matcher.group(1));
+					} else {
+						throw new InvalidValueException("Can't parse Service ID string (namespace/id): " + s);
+					}
 				}
 			}
 		}
