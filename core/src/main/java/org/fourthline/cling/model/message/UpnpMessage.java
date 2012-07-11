@@ -208,4 +208,21 @@ public abstract class UpnpMessage<O extends UpnpOperation> {
     public String toString() {
         return "(" + getClass().getSimpleName() + ") " + getOperation().toString();
     }
+    
+    
+    // helpers
+    
+    public boolean isWMPRequest() {
+		String userAgent = headers.getFirstHeader("User-Agent");
+		if(userAgent == null) return false;
+		return userAgent.contains("Windows-Media-Player") && !userAgent.contains("J-River");
+	}
+
+    public boolean isXbox360Request() {
+		String userAgent = headers.getFirstHeader("User-Agent");
+		String server = headers.getFirstHeader("Server");
+		
+		return (userAgent != null && (userAgent.contains("Xbox") || userAgent.contains("Xenon"))) ||
+				(server != null && server.contains("Xbox"));
+	}
 }
