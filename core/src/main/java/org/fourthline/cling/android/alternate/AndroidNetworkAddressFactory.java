@@ -107,4 +107,17 @@ public class AndroidNetworkAddressFactory extends NetworkAddressFactoryImpl {
 		}
 		throw new IllegalStateException("Can't find any IPv4 or IPv6 address on interface: " + networkInterface.getDisplayName());        	
 	}
+	
+	@Override
+	  protected void discoverNetworkInterfaces() throws InitializationException {
+		try {
+			super.discoverNetworkInterfaces();
+		} catch (Exception ex) {
+			// try to workaround ICS bug on some model with network interface disappearing while enumerated
+			// http://code.google.com/p/android/issues/detail?id=33661
+			log.warning("Exception while enumerating network interfaces, trying once more: " + ex);
+			super.discoverNetworkInterfaces();
+		}
+	}
+
 }
