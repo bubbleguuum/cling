@@ -17,6 +17,14 @@
 
 package org.fourthline.cling.protocol;
 
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Set;
+import java.util.concurrent.CopyOnWriteArraySet;
+import java.util.logging.Logger;
+
 import org.fourthline.cling.UpnpService;
 import org.fourthline.cling.binding.xml.DescriptorBindingException;
 import org.fourthline.cling.binding.xml.DeviceDescriptorBinder;
@@ -30,16 +38,9 @@ import org.fourthline.cling.model.meta.Icon;
 import org.fourthline.cling.model.meta.RemoteDevice;
 import org.fourthline.cling.model.meta.RemoteService;
 import org.fourthline.cling.model.types.ServiceType;
+import org.fourthline.cling.model.types.UDN;
 import org.fourthline.cling.registry.RegistrationException;
 import org.seamless.util.Exceptions;
-
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Set;
-import java.util.concurrent.CopyOnWriteArraySet;
-import java.util.logging.Logger;
 
 /**
  * Retrieves all remote device XML descriptors, parses them, creates an immutable device and service metadata graph.
@@ -158,6 +159,8 @@ public class RetrieveRemoteDescriptors implements Runnable {
         describe(deviceDescMsg.getBodyString());
     }
 
+    private List<UDN> validateErrorLogDevices = new ArrayList<UDN>();
+    
     protected void describe(String descriptorXML) {
 
         boolean notifiedStart = false;
@@ -178,7 +181,10 @@ public class RetrieveRemoteDescriptors implements Runnable {
             log.fine("Hydrating described device's services: " + describedDevice);
             RemoteDevice hydratedDevice = describeServices(describedDevice);
             if (hydratedDevice == null) {
-                log.warning("Device service description failed: " + rd);
+            	if(!validateErrorLogDevices.contains(rd.getIdentity().getUdn())) {
+            		validateErrorLogDevices.add(rd.getIdentity().getUdn());
+            		log.warning("Device service description failed: " + rd);
+            	}
                 if (notifiedStart)
                     getUpnpService().getRegistry().notifyDiscoveryFailure(
                             describedDevice,
@@ -195,12 +201,16 @@ public class RetrieveRemoteDescriptors implements Runnable {
             getUpnpService().getRegistry().addDevice(hydratedDevice);
 
         } catch (ValidationException ex) {
-            log.warning("Could not validate device model: " + rd);
-            for (ValidationError validationError : ex.getErrors()) {
-                log.warning(validationError.toString());
-            }
-            if (describedDevice != null && notifiedStart)
-                getUpnpService().getRegistry().notifyDiscoveryFailure(describedDevice, ex);
+    		// avoid error log spam each time device is discovered. Errors are logged once per device
+        	if(!validateErrorLogDevices.contains(rd.getIdentity().getUdn())) {
+        		validateErrorLogDevices.add(rd.getIdentity().getUdn());
+        		log.warning("Could not validate device model: " + rd);
+        		for (ValidationError validationError : ex.getErrors()) {
+        			log.warning(validationError.toString());
+        		}
+        		if (describedDevice != null && notifiedStart)
+        			getUpnpService().getRegistry().notifyDiscoveryFailure(describedDevice, ex);
+        	}
 
         } catch (DescriptorBindingException ex) {
             log.warning("Could not hydrate device or its services from descriptor: " + rd);
