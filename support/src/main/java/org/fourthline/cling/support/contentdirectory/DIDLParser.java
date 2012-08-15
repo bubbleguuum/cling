@@ -351,9 +351,12 @@ public class DIDLParser extends SAXParser {
 
     protected void generateContainer(Container container, Document descriptor, Element parent, boolean nestedItems) {
 
-        if (container.getTitle() == null) {
-            throw new RuntimeException("Missing 'dc:title' element for container: " + container.getId());
+    	String title = container.getTitle(); 
+        if (title == null) {
+        	log.warning("Missing 'dc:title' element for container: " + container.getId());
+        	title = "No title";
         }
+        
         if (container.getClazz() == null) {
             throw new RuntimeException("Missing 'upnp:class' element for container: " + container.getId());
         }
@@ -372,14 +375,14 @@ public class DIDLParser extends SAXParser {
             containerElement.setAttribute("childCount", Integer.toString(container.getChildCount()));
         }
 
-        containerElement.setAttribute("restricted", Boolean.toString(container.isRestricted()));
-        containerElement.setAttribute("searchable", Boolean.toString(container.isSearchable()));
+        containerElement.setAttribute("restricted", booleanToInt(container.isRestricted()));
+        containerElement.setAttribute("searchable", booleanToInt(container.isSearchable()));
 
         appendNewElementIfNotNull(
                 descriptor,
                 containerElement,
                 "dc:title",
-                container.getTitle(),
+                title,
                 DIDLObject.Property.DC.NAMESPACE.URI
         );
 
@@ -429,11 +432,17 @@ public class DIDLParser extends SAXParser {
             generateDescMetadata(descMeta, descriptor, containerElement);
         }
     }
+    
+    private String booleanToInt(boolean b) {
+    	return b ? "1": "0"; 
+    }
 
     protected void generateItem(Item item, Document descriptor, Element parent) {
 
-        if (item.getTitle() == null) {
-            throw new RuntimeException("Missing 'dc:title' element for item: " + item.getId());
+    	String title = item.getTitle(); 
+        if (title == null) {
+        	log.warning("Missing 'dc:title' element for item: " + item.getId());
+        	title = "No title";
         }
         if (item.getClazz() == null) {
             throw new RuntimeException("Missing 'upnp:class' element for item: " + item.getId());
@@ -451,13 +460,13 @@ public class DIDLParser extends SAXParser {
 
         if (item.getRefID() != null)
             itemElement.setAttribute("refID", item.getRefID());
-        itemElement.setAttribute("restricted", Boolean.toString(item.isRestricted()));
+        itemElement.setAttribute("restricted", booleanToInt(item.isRestricted()));
 
         appendNewElementIfNotNull(
                 descriptor,
                 itemElement,
                 "dc:title",
-                item.getTitle(),
+                title,
                 DIDLObject.Property.DC.NAMESPACE.URI
         );
 
