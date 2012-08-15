@@ -140,6 +140,11 @@ public class RegistryExpirationTest {
                     public ServiceType[] getExclusiveServiceTypes() {
                         return wrapped.getExclusiveServiceTypes();
                     }
+                    
+					@Override
+					public int getRegistryMaintenanceAliveBlastIntervalMillis() {
+						return 0;
+					}
 
                     @Override
                     public int getRegistryMaintenanceIntervalMillis() {
@@ -180,6 +185,7 @@ public class RegistryExpirationTest {
                     public void shutdown() {
                         wrapped.shutdown();
                     }
+
                 };
             }
         };
