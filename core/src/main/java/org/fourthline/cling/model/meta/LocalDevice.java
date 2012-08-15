@@ -49,6 +49,7 @@ public class LocalDevice extends Device<DeviceIdentity, LocalDevice, LocalServic
     final private DeviceDetailsProvider deviceDetailsProvider;
     
     private boolean isAdvertising = false;
+    private boolean isSendingByeOnStart = false;
 
     public LocalDevice(DeviceIdentity identity) throws ValidationException {
         super(identity);
@@ -320,6 +321,14 @@ public class LocalDevice extends Device<DeviceIdentity, LocalDevice, LocalServic
     
     public boolean isAdvertising() {
     	return isAdvertising;
+    }
+    
+    public void setSendByeOnStart(boolean b) {
+    	isSendingByeOnStart = b;
+    }
+
+    public boolean isSendByeOnStart() {
+    	return isSendingByeOnStart;
     }
 
 }
