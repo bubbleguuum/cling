@@ -93,7 +93,7 @@ public abstract class AbstractActionExecutor implements ActionExecutor {
             actionInvocation.setFailure(
                     new ActionException(
                             ErrorCode.ACTION_FAILED,
-                            "Action method invocation failed: " + (ex.getMessage() != null ? ex.getMessage() : ex.toString()),
+                            (ex.getMessage() != null ? ex.getMessage() : ex.toString()),
                             ex
                     )
             );
