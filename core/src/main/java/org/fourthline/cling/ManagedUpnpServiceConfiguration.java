@@ -158,6 +158,10 @@ public class ManagedUpnpServiceConfiguration implements UpnpServiceConfiguration
     public ServiceType[] getExclusiveServiceTypes() {
         return new ServiceType[0];
     }
+    
+    public int getRegistryMaintenanceAliveBlastIntervalMillis() {
+    	return 0; //disabled by default
+    }
 
     public int getRegistryMaintenanceIntervalMillis() {
         return 1000;

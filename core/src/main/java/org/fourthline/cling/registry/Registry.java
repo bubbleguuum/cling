@@ -422,6 +422,8 @@ public interface Registry {
 	public void setResourceMissingProcessor(ResourceProcessor resourceProcessor);
 	
 	public ResourceProcessor getResourceMissingProcessor();
+	
+	public void advertiseLocalDevices();
 
     // #################################################################################################
 

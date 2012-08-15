@@ -17,6 +17,7 @@
 
 package org.fourthline.cling.registry;
 
+import org.fourthline.cling.model.ModelUtil;
 import org.fourthline.cling.model.resource.Resource;
 import org.fourthline.cling.model.gena.CancelReason;
 import org.fourthline.cling.model.gena.LocalGENASubscription;
@@ -40,6 +41,8 @@ import java.util.logging.Logger;
 class LocalItems extends RegistryItems<LocalDevice, LocalGENASubscription> {
 
     private static Logger log = Logger.getLogger(Registry.class.getName());
+    
+    private long lastAliveBlastTimestampMs = 0;
 
     LocalItems(RegistryImpl registry) {
         super(registry);
@@ -76,6 +79,10 @@ class LocalItems extends RegistryItems<LocalDevice, LocalGENASubscription> {
         deviceItems.add(localItem);
         log.fine("Registered local device: " + localItem);
 
+        if (localDevice.isSendByeOnStart()){
+        	advertiseByebye(localDevice, true);
+        }
+        
         if(localDevice.isAdvertising()) {
        		 advertiseAlive(localDevice);
         }
@@ -170,7 +177,7 @@ class LocalItems extends RegistryItems<LocalDevice, LocalGENASubscription> {
     }
 
     /* ############################################################################################################ */
-
+    
     void maintain() {
 
     	if(deviceItems.isEmpty()) return ;
@@ -187,6 +194,25 @@ class LocalItems extends RegistryItems<LocalDevice, LocalGENASubscription> {
             log.fine("Refreshing local device advertisement: " + expiredLocalItem.getItem());
             advertiseAlive(expiredLocalItem.getItem());
             expiredLocalItem.getExpirationDetails().stampLastRefresh();
+        }
+        
+        // Blast alive messages at regular interval
+        // This hack allows to have local items discovered by devices having problem with M-SEARCH
+        // Some UPnP devices (XBMC and other Platinum UPnP SDK based devices, OPPO-93) seem to not properly receive SSDP M-SEARCH replies sent by cling, but will handle NOTIFY messages just fine
+        // iMediaShare on Android has been found to do this (every 10s) and is indeed always discovered by any device
+
+        int aliveIntervalMs = registry.getConfiguration().getRegistryMaintenanceAliveBlastIntervalMillis();
+        if(aliveIntervalMs > 0) {
+        	long now = System.currentTimeMillis();
+        	if(now - lastAliveBlastTimestampMs > aliveIntervalMs) {
+        		//log.info("blasting local devices alive advertisement");
+        		lastAliveBlastTimestampMs = now;
+        		for (RegistryItem<UDN, LocalDevice> localItem : deviceItems) {
+        			if (localItem.getItem().isAdvertising() && !expiredLocalItems.contains(localItem)) {
+        				advertiseAlive(localItem.getItem());
+        			}
+        		}
+        	}
         }
 
         // Expire incoming subscriptions
@@ -248,6 +274,15 @@ class LocalItems extends RegistryItems<LocalDevice, LocalGENASubscription> {
 			advertiseAlive(localDevice);
 		} else {
 			advertiseByebye(localDevice, true);
+		}
+	}
+
+	public void advertiseLocalDevices() {
+		//log.severe("advertising local devices...");
+		for (RegistryItem<UDN, LocalDevice> localItem : deviceItems) {
+			if (localItem.getItem().isAdvertising()) {
+				advertiseAlive(localItem.getItem());
+			}
 		}
 	}
 

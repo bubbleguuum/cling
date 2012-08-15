@@ -513,4 +513,9 @@ public class RegistryImpl implements Registry {
 	public ResourceProcessor getResourceMissingProcessor() {
 		return resourceMissingProcessor;
 	}
+	
+	@Override
+	synchronized public void advertiseLocalDevices() {
+		localItems.advertiseLocalDevices();
+	}
 }

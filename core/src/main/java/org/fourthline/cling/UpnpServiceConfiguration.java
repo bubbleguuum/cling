@@ -141,6 +141,12 @@ public interface UpnpServiceConfiguration {
      * @return The time in milliseconds to wait between each registry maintenance operation.
      */
     public int getRegistryMaintenanceIntervalMillis();
+    
+    /**
+     * @return The time in milliseconds between ALIVE message blast for local items done during registry maintenance
+     *         Set to 0 to not send ALIVE blast messages 
+     */
+    public int getRegistryMaintenanceAliveBlastIntervalMillis();
 
     /**
      * Returns the time in seconds a remote device will be registered until it is expired.
