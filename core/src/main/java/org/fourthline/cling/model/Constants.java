@@ -53,9 +53,10 @@ public interface Constants {
     // urn:schemas-microsoft-com:device:tv:pbda:1
     // urn:schemas-microsoft-com:service:pbda:tuner:1
     //
-    // authorizing symbol ':' in the regexp make it pass without side effects 
+    // authorizing symbol ':' in the regexp make it pass without side effects
+    // allow empty String
     //public static final String REGEX_TYPE = "[a-zA-Z_0-9\\-]{1,64}";
-    public static final String REGEX_TYPE = "[a-zA-Z_0-9:\\-]{1,64}";
+    public static final String REGEX_TYPE = "[a-zA-Z_0-9:\\-]{0,64}";
     public static final String REGEX_ID = "[a-zA-Z_0-9\\-:\\.]{1,64}";
 
     /*
