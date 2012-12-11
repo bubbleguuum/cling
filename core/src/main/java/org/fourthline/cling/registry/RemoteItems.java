@@ -178,7 +178,7 @@ class RemoteItems extends RegistryItems<RemoteDevice, RemoteGENASubscription> {
     boolean remove(final RemoteDevice remoteDevice, boolean shuttingDown) throws RegistrationException {
         final RemoteDevice registeredDevice = get(remoteDevice.getIdentity().getUdn(), true);
         if (registeredDevice != null) {
-
+        	
             log.fine("Removing remote device from registry: " + remoteDevice);
 
             // Resources
@@ -187,7 +187,7 @@ class RemoteItems extends RegistryItems<RemoteDevice, RemoteGENASubscription> {
                     log.fine("Unregistered resource: " + deviceResource);
                 }
             }
-
+            
             // Active subscriptions
             Iterator<RegistryItem<String, RemoteGENASubscription>> it = subscriptionItems.iterator();
             while (it.hasNext()) {
@@ -199,6 +199,10 @@ class RemoteItems extends RegistryItems<RemoteDevice, RemoteGENASubscription> {
                 if (subscriptionForUDN.equals(registeredDevice.getIdentity().getUdn())) {
                     log.fine("Removing outgoing subscription: " + outgoingSubscription.getKey());
                     it.remove();
+                    /*
+                     
+                     HACK: Disabled because it causes deadlocks
+                      
                     if (!shuttingDown) {
                         registry.getConfiguration().getRegistryListenerExecutor().execute(
                                 new Runnable() {
@@ -208,9 +212,10 @@ class RemoteItems extends RegistryItems<RemoteDevice, RemoteGENASubscription> {
                                 }
                         );
                     }
+                    */
                 }
             }
-
+            
             // Only notify listeners if we are NOT in the process of shutting down the registry
             if (!shuttingDown) {
                 for (final RegistryListener listener : registry.getListeners()) {
