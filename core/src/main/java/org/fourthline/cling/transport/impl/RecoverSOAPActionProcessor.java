@@ -63,7 +63,7 @@ public abstract class RecoverSOAPActionProcessor extends PullSOAPActionProcessor
 			//		<CurrentURI>http://192.168.1.14:56923/content/12a470d854dbc6887e4103e3140783fd.wav?profile_id=0&convert=wav</CurrentURI>
 			//			
 
-			log.severe("bad SOAP XML request: " + ex);
+			log.warning("bad SOAP XML request: " + ex);
 
 			String fixedBody = XmlPullParserUtils.fixXMLEntities(requestMessage.getBodyString().trim());
 			requestMessage.setBody(BodyType.STRING, fixedBody);
@@ -87,7 +87,7 @@ public abstract class RecoverSOAPActionProcessor extends PullSOAPActionProcessor
 			super.readBody(responseMsg, actionInvocation);
 		} catch(UnsupportedDataException ex) {
 
-			log.severe("bad SOAP XML response: " + ex);
+			log.warning("bad SOAP XML response: " + ex);
 			String fixedBody = XmlPullParserUtils.fixXMLEntities(responseMsg.getBodyString().trim());
 
 			if(fixedBody.endsWith("</s:Envelop")) {

@@ -48,7 +48,7 @@ public class RecoverGENAEventProcessor extends PullGENAEventProcessor {
 			super.readBody(requestMessage);
 		} catch(UnsupportedDataException ex) {
 
-			log.severe("bad GENA Event XML found: " + ex);
+			log.warning("bad GENA Event XML found: " + ex);
 
 			// some properties may have been read by the pull parser at this point, so reset the list
 			requestMessage.getStateVariableValues().clear();

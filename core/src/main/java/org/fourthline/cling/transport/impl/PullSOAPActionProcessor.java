@@ -80,7 +80,6 @@ public class PullSOAPActionProcessor extends SOAPActionProcessorImpl  {
 			readBodyResponse(xpp, actionInvocation);
 
 		} catch (Exception ex) {
-			ex.printStackTrace();
 			throw new UnsupportedDataException("Can't transform message payload: " + ex, ex, body);
 		}
 		
