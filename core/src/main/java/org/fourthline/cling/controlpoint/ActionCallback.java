@@ -89,8 +89,8 @@ public abstract class ActionCallback implements Runnable {
     }
 
     public static interface ActionCallbackInterceptor {
-    	public void preExecute(ActionInvocation actionInvocation);
-    	public void postExecute(ActionInvocation actionInvocation);
+    	public void preExecute(ActionInvocation<Service> actionInvocation);
+    	public void postExecute(ActionInvocation<Service> actionInvocation);
     }
 
     protected final ActionInvocation actionInvocation;
