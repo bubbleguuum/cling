@@ -23,6 +23,7 @@ import java.io.UnsupportedEncodingException;
 
 import org.fourthline.cling.model.message.header.ContentTypeHeader;
 import org.fourthline.cling.model.message.header.UpnpHeader;
+import org.seamless.http.RequestInfo;
 
 /**
  * A non-streaming message, the interface between the transport layer and the protocols.
@@ -211,18 +212,21 @@ public abstract class UpnpMessage<O extends UpnpOperation> {
     
     
     // helpers
+    public boolean isPS3Request() {
+		String userAgent = headers.getFirstHeader("User-Agent");
+		String avClientInfo = headers.getFirstHeader("X-AV-Client-Info");
+    	return RequestInfo.isPS3Request(userAgent, avClientInfo); 
+    }
     
     public boolean isWMPRequest() {
 		String userAgent = headers.getFirstHeader("User-Agent");
-		if(userAgent == null) return false;
-		return userAgent.contains("Windows-Media-Player") && !userAgent.contains("J-River");
+		return RequestInfo.isWMPRequest(userAgent);
+
 	}
 
     public boolean isXbox360Request() {
 		String userAgent = headers.getFirstHeader("User-Agent");
 		String server = headers.getFirstHeader("Server");
-		
-		return (userAgent != null && (userAgent.contains("Xbox") || userAgent.contains("Xenon"))) ||
-				(server != null && server.contains("Xbox"));
+		return RequestInfo.isXbox360Request(userAgent, server);
 	}
 }

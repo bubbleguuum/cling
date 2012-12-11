@@ -20,6 +20,8 @@ package org.fourthline.cling.model.message;
 import java.net.URI;
 import java.net.URL;
 
+import com.bubblesoft.org.apache.http.impl.DefaultHttpServerConnection;
+
 /**
  * A TCP (HTTP) stream request message.
  *
@@ -29,6 +31,7 @@ public class StreamRequestMessage extends UpnpMessage<UpnpRequest> {
 	
 	private String localAddress;
 	private String remoteAddress;
+	private DefaultHttpServerConnection connection;
 
     public StreamRequestMessage(StreamRequestMessage source) {
         super(source);
@@ -94,6 +97,14 @@ public class StreamRequestMessage extends UpnpMessage<UpnpRequest> {
 	
 	public String getRemoteAddress() {
 		return remoteAddress;
+	}
+
+	public void setConnection(DefaultHttpServerConnection connection) {
+		this.connection = connection;
+	}
+	
+	public DefaultHttpServerConnection getConnection() {
+		return connection;
 	}
     
 }

@@ -198,6 +198,8 @@ public class HttpServerConnectionUpnpStream extends UpnpStream {
             } else {
             	requestMessage.setRemoteAddress(remoteAddress.getHostAddress());
             }
+            
+            requestMessage.setConnection((DefaultHttpServerConnection)connection);
 
             // Body
             if (httpRequest instanceof HttpEntityEnclosingRequest) {

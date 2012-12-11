@@ -17,7 +17,6 @@
 
 package org.fourthline.cling.protocol.sync;
 
-import java.net.InetAddress;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -38,8 +37,6 @@ import org.fourthline.cling.model.types.ErrorCode;
 import org.fourthline.cling.protocol.ReceivingSync;
 import org.fourthline.cling.transport.spi.UnsupportedDataException;
 import org.seamless.util.Exceptions;
-
-import sun.security.action.GetLongAction;
 
 /**
  * Handles reception of control messages, invoking actions on local services.
@@ -69,11 +66,16 @@ public class ReceivingAction extends ReceivingSync<StreamRequestMessage, StreamR
 
     final private static Logger log = Logger.getLogger(ReceivingAction.class.getName());
 
-    final protected static ThreadLocal<IncomingActionRequestMessage> requestThreadLocal = new ThreadLocal();
-    final protected static ThreadLocal<UpnpHeaders> extraResponseHeadersThreadLocal = new ThreadLocal();
+    final protected static ThreadLocal<IncomingActionRequestMessage> requestThreadLocal = new ThreadLocal<IncomingActionRequestMessage>();
+    final protected static ThreadLocal<UpnpHeaders> extraResponseHeadersThreadLocal = new ThreadLocal<UpnpHeaders>();
 
     public ReceivingAction(UpnpService upnpService, StreamRequestMessage inputMessage) {
         super(upnpService, inputMessage);
+    }
+    
+    static public void setThreadLocalData(IncomingActionRequestMessage msg, UpnpHeaders headers) {
+    	requestThreadLocal.set(msg);
+    	extraResponseHeadersThreadLocal.set(headers);
     }
 
     protected StreamResponseMessage executeSync() {
@@ -116,6 +118,7 @@ public class ReceivingAction extends ReceivingSync<StreamRequestMessage, StreamR
                     new IncomingActionRequestMessage(getInputMessage(), resource.getModel());
             requestMessage.setLocalAddress(getInputMessage().getLocalAddress());
             requestMessage.setRemoteAddress(getInputMessage().getRemoteAddress());
+            requestMessage.setConnection(getInputMessage().getConnection());
 
             // Preserve message in a TL
             requestThreadLocal.set(requestMessage);
@@ -126,15 +129,19 @@ public class ReceivingAction extends ReceivingSync<StreamRequestMessage, StreamR
             if(header != null) {
             	userAgent = header.getValue();
             }
+            
+            String avClientInfoHeader = getInputMessage().getHeaders().getFirstHeader("X-AV-Client-Info"); // HACK
+            
 
             log.finer("Created incoming action request message: " + requestMessage);
             invocation = new ActionInvocation(requestMessage.getAction(), userAgent);
-
+            
+            invocation.setAvClientInfo(avClientInfoHeader); // HACK
 
             // Throws UnsupportedDataException if the body can't be read
             log.fine("Reading body of request message");
             getUpnpService().getConfiguration().getSoapActionProcessor().readBody(requestMessage, invocation);
-
+            
             log.fine("Executing on local service: " + invocation);
             resource.getModel().getExecutor(invocation.getAction()).execute(invocation);
 
@@ -203,13 +210,34 @@ public class ReceivingAction extends ReceivingSync<StreamRequestMessage, StreamR
         return extraResponseHeadersThreadLocal.get();
     }
     
+	public static String getUserAgent() {
+		if(!isRemote()) return null;
+		return getRequestMessage().getHeaders().getFirstHeader("User-Agent");
+	}
 	
-    public static boolean isWMPRequest() {
+	public static String getRemoteAddr() {
+		if(!isRemote()) return null;
+		return getRequestMessage().getRemoteAddress();
+	}
+	
+    public static boolean isPS3Action() {
+		return isRemote() &&  getRequestMessage().isPS3Request();
+	}
+    
+    public static boolean isWMPAction() {
 		return isRemote() &&  getRequestMessage().isWMPRequest();
 	}
 	
-    public static boolean isXbox360Request() {
+    public static boolean isXbox360Action() {
 		return isRemote() &&  getRequestMessage().isXbox360Request();
 	}
-
+    
+    public static void throwIfCancelled() throws InterruptedException {
+    	Exceptions.throwIfInterrupted();
+    	
+    	// only supported with apache transport implementation
+    	if(isRemote() && getRequestMessage().getConnection() != null && !getRequestMessage().getConnection().isOpen()) 
+    		throw new InterruptedException();
+    }
+	
 }
