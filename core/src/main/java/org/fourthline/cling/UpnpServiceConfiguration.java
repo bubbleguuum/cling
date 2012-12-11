@@ -147,6 +147,19 @@ public interface UpnpServiceConfiguration {
      *         Set to 0 to not send ALIVE blast messages 
      */
     public int getRegistryMaintenanceAliveBlastIntervalMillis();
+    
+    /**
+     * @return true if timeout specified in incoming received notification subscription should be ignored and the default value 
+     * ({@link org.fourthline.cling.model.UserConstants.DEFAULT_SUBSCRIPTION_DURATION_SECONDS}) used instead. 
+     * 
+     * This workarounds the issue of a few subscribing devices having trouble renewing subscriptions with the effect of the subscribed
+     * device in their UI.
+     * Returning true in conjunction with a high value for {@link org.fourthline.cling.model.UserConstants.DEFAULT_SUBSCRIPTION_DURATION_SECONDS}
+     * ensure devices will not disappear      
+     *          
+     */
+    public boolean isReceivedSubscriptionTimeoutOverridenWithDefault();
+
 
     /**
      * Returns the time in seconds a remote device will be registered until it is expired.

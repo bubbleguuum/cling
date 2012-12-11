@@ -197,6 +197,10 @@ public class DefaultUpnpServiceConfiguration implements UpnpServiceConfiguration
     public int getRegistryMaintenanceAliveBlastIntervalMillis() {
     	return 0; //disabled by default
     }
+    
+	public boolean isReceivedSubscriptionTimeoutOverridenWithDefault() {
+		return false;
+	}
 
     public int getRegistryMaintenanceIntervalMillis() {
         return 1000;
@@ -338,4 +342,5 @@ public class DefaultUpnpServiceConfiguration implements UpnpServiceConfiguration
             return t;
         }
     }
+
 }

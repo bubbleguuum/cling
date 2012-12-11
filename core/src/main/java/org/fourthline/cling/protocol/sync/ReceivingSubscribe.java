@@ -132,8 +132,13 @@ public class ReceivingSubscribe extends ReceivingSync<StreamRequestMessage, Outg
             return new OutgoingSubscribeResponseMessage(UpnpResponse.Status.PRECONDITION_FAILED);
         }
 
-        Integer timeoutSeconds = requestMessage.getRequestedTimeoutSeconds();
-
+        Integer timeoutSeconds; 
+        if(getUpnpService().getConfiguration().isReceivedSubscriptionTimeoutOverridenWithDefault()) {
+        	timeoutSeconds = null; // use default value
+        } else {
+        	timeoutSeconds = requestMessage.getRequestedTimeoutSeconds();
+        }
+        
         try {
             subscription = new LocalGENASubscription(service, timeoutSeconds, requestMessage.getCallbackURLs()) {
                 public void established() {
