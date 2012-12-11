@@ -19,7 +19,6 @@ package org.fourthline.cling.model.gena;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -34,8 +33,8 @@ import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.fourthline.cling.model.Constants;
 import org.fourthline.cling.model.ServiceManager;
+import org.fourthline.cling.model.UserConstants;
 import org.fourthline.cling.model.message.header.SubscriptionIdHeader;
 import org.fourthline.cling.model.meta.LocalService;
 import org.fourthline.cling.model.meta.StateVariable;
@@ -191,8 +190,6 @@ public abstract class LocalGENASubscription extends GENASubscription<LocalServic
         Collection<StateVariableValue> newValues = (Collection) e.getNewValue();
         Set<String> excludedVariables = moderateStateVariables(currentTime, newValues);
 
-        // Map<String, StateVariableValue> oldValues = currentValues;
-        currentValues.clear();
         for (StateVariableValue newValue : newValues) {
             String name = newValue.getStateVariable().getName();
             if (!excludedVariables.contains(name)) {
@@ -286,7 +283,7 @@ public abstract class LocalGENASubscription extends GENASubscription<LocalServic
     synchronized public void setSubscriptionDuration(Integer requestedDurationSeconds) {
         this.requestedDurationSeconds =
                 requestedDurationSeconds == null
-                        ? Constants.DEFAULT_SUBSCRIPTION_DURATION_SECONDS
+                        ? UserConstants.DEFAULT_SUBSCRIPTION_DURATION_SECONDS
                         : requestedDurationSeconds;
 
         setActualSubscriptionDurationSeconds(this.requestedDurationSeconds);

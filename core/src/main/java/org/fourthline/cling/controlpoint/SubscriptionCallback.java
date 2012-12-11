@@ -17,7 +17,11 @@
 
 package org.fourthline.cling.controlpoint;
 
-import org.fourthline.cling.model.Constants;
+import java.util.Collections;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import org.fourthline.cling.model.UserConstants;
 import org.fourthline.cling.model.gena.CancelReason;
 import org.fourthline.cling.model.gena.GENASubscription;
 import org.fourthline.cling.model.gena.LocalGENASubscription;
@@ -27,10 +31,6 @@ import org.fourthline.cling.model.meta.LocalService;
 import org.fourthline.cling.model.meta.RemoteService;
 import org.fourthline.cling.model.meta.Service;
 import org.seamless.util.Exceptions;
-
-import java.util.Collections;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * Subscribe and receive events from a service through GENA.
@@ -83,7 +83,7 @@ public abstract class SubscriptionCallback implements Runnable {
 
     protected SubscriptionCallback(Service service) {
         this.service = service;
-        this.requestedDurationSeconds = Constants.DEFAULT_SUBSCRIPTION_DURATION_SECONDS;
+        this.requestedDurationSeconds = UserConstants.DEFAULT_SUBSCRIPTION_DURATION_SECONDS;
     }
 
     protected SubscriptionCallback(Service service, int requestedDurationSeconds) {

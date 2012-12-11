@@ -21,5 +21,6 @@ public class UserConstants {
 
 	public static String PRODUCT_TOKEN_NAME = "4thLine-Cling";
 	public static String PRODUCT_TOKEN_VERSION = "1.1";
+	public static int DEFAULT_SUBSCRIPTION_DURATION_SECONDS = 1800;
 
 }
