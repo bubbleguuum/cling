@@ -32,30 +32,38 @@ import org.fourthline.cling.model.meta.StateVariable;
  */
 public abstract class StateVariableAccessor {
 
-    public StateVariableValue read(final StateVariable<LocalService> stateVariable, final Object serviceImpl) throws Exception {
+	public class AccessCommand implements Command {
+		Object result;
+		Object serviceImpl;
+		StateVariable<LocalService> stateVariable;
 
-        class AccessCommand implements Command {
-            Object result;
-            public void execute(ServiceManager serviceManager) throws Exception {
-                result = read(serviceImpl);
-                if (stateVariable.getService().isStringConvertibleType(result)) {
-                    result = result.toString();
-                }
-            }
-        }
+		public AccessCommand(StateVariable<LocalService> stateVariable, Object serviceImpl) {
+			this.stateVariable = stateVariable;
+			this.serviceImpl = serviceImpl;
+		}
 
-        AccessCommand cmd = new AccessCommand();
-        stateVariable.getService().getManager().execute(cmd);
-        return new StateVariableValue(stateVariable, cmd.result);
-    }
+		public void execute(ServiceManager serviceManager) throws Exception {
+			result = read(serviceImpl);
+			if (stateVariable.getService().isStringConvertibleType(result)) {
+				result = result.toString();
+			}
+		}
+	}
 
-    public abstract Class<?> getReturnType();
+	public StateVariableValue read(final StateVariable<LocalService> stateVariable, final Object serviceImpl) throws Exception {
+		AccessCommand cmd = new AccessCommand(stateVariable, serviceImpl);
+		stateVariable.getService().getManager().execute(cmd);
+		return new StateVariableValue(stateVariable, cmd.result);
+	}
 
-    // TODO: Especially this shouldn't be public
-    public abstract Object read(Object serviceImpl) throws Exception;
 
-    @Override
-    public String toString() {
-        return "(" + getClass().getSimpleName() + ")";
-    }
+	public abstract Class<?> getReturnType();
+
+	// TODO: Especially this shouldn't be public
+	public abstract Object read(Object serviceImpl) throws Exception;
+
+	@Override
+	public String toString() {
+		return "(" + getClass().getSimpleName() + ")";
+	}
 }
