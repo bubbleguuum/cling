@@ -21,6 +21,7 @@ import org.fourthline.cling.model.meta.Action;
 import org.fourthline.cling.model.meta.ActionArgument;
 import org.fourthline.cling.model.meta.Service;
 import org.fourthline.cling.model.types.InvalidValueException;
+import org.seamless.http.RequestInfo;
 
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -43,6 +44,7 @@ public class ActionInvocation<S extends Service> {
     protected ActionException failure = null;
 
 	private String userAgent;
+	private String avClientInfo; // "X-AV-Client-Info" header, only found and used to identify PS3
 	private String remoteAddr;
 
     public ActionInvocation() {
@@ -185,6 +187,14 @@ public class ActionInvocation<S extends Service> {
 		this.userAgent = userAgent;
 	}
 	
+	public String getAvClientInfo() {
+		return avClientInfo;
+	}
+	
+	public void setAvClientInfo(String avClientInfo) {
+		this.avClientInfo = avClientInfo;
+	}
+	
 	public String getRemoteAddr() {
 		return remoteAddr;
 	}
@@ -192,5 +202,7 @@ public class ActionInvocation<S extends Service> {
 	public void setRemoteAddr(String remoteAddr) {
 		this.remoteAddr = remoteAddr;
 	}
+	
+	
 
 }
