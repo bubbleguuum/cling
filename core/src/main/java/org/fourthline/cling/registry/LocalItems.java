@@ -48,7 +48,7 @@ class LocalItems extends RegistryItems<LocalDevice, LocalGENASubscription> {
         super(registry);
     }
 
-    void add(LocalDevice localDevice) throws RegistrationException {
+    void add(final LocalDevice localDevice) throws RegistrationException {
 
         if (registry.getDevice(localDevice.getIdentity().getUdn(), false) != null) {
             log.fine("Ignoring addition, device already registered: " + localDevice);
@@ -87,9 +87,16 @@ class LocalItems extends RegistryItems<LocalDevice, LocalGENASubscription> {
        		 advertiseAlive(localDevice);
         }
 
-        for (RegistryListener listener : registry.getListeners()) {
-            listener.localDeviceAdded(registry, localDevice);
+        for (final RegistryListener listener : registry.getListeners()) {
+            registry.getConfiguration().getRegistryListenerExecutor().execute(
+                    new Runnable() {
+                        public void run() {
+                            listener.localDeviceAdded(registry, localDevice);
+                        }
+                    }
+            );
         }
+
 
     }
 
