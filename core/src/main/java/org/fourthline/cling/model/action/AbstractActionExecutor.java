@@ -59,7 +59,7 @@ public abstract class AbstractActionExecutor implements ActionExecutor {
      */
     public void execute(final ActionInvocation<LocalService> actionInvocation) {
 
-        log.fine("Invoking on local service: " + actionInvocation);
+       log.fine("Invoking on local service: " + actionInvocation);
 
         final LocalService service = actionInvocation.getAction().getService();
 
@@ -68,7 +68,7 @@ public abstract class AbstractActionExecutor implements ActionExecutor {
             if (service.getManager() == null) {
                 throw new IllegalStateException("Service has no implementation factory, can't get service instance");
             }
-
+            
             service.getManager().execute(new Command() {
                 public void execute(ServiceManager serviceManager) throws Exception {
                     AbstractActionExecutor.this.execute(
@@ -90,6 +90,7 @@ public abstract class AbstractActionExecutor implements ActionExecutor {
         } catch (Exception ex) {
             log.fine("Exception thrown by execution, wrapping in ActionException and returning: " + ex);
             log.log(Level.FINE, "Exception root cause: ", Exceptions.unwrap(ex));
+            Exceptions.throwIfNPE(ex); // let it die if NPE
             actionInvocation.setFailure(
                     new ActionException(
                             ErrorCode.ACTION_FAILED,
@@ -97,7 +98,7 @@ public abstract class AbstractActionExecutor implements ActionExecutor {
                             ex
                     )
             );
-        }
+        } 
     }
 
     protected abstract void execute(ActionInvocation<LocalService> actionInvocation, Object serviceImpl) throws Exception;
