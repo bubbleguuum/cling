@@ -36,7 +36,7 @@ public class StateVariableAllowedValueRange implements Validatable {
     final private static Logger log = Logger.getLogger(StateVariableAllowedValueRange.class.getName());
 
     final private long minimum;
-    final private long maximum;
+    private long maximum;
     final private long step;
 
     public StateVariableAllowedValueRange(long minimum, long maximum) {
@@ -79,5 +79,10 @@ public class StateVariableAllowedValueRange implements Validatable {
     @Override
     public String toString() {
         return "Range Min: " + getMinimum() + " Max: " + getMaximum() + " Step: " + getStep();
+    }
+    
+    // HACK
+    public void setMaximum(long maximum) {
+    	this.maximum = maximum;
     }
 }
