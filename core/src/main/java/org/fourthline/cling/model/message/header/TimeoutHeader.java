@@ -17,10 +17,10 @@
 
 package org.fourthline.cling.model.message.header;
 
-import org.fourthline.cling.model.Constants;
-
-import java.util.regex.Pattern;
 import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import org.fourthline.cling.model.UserConstants;
 
 /**
  * @author Christian Bauer
@@ -33,7 +33,7 @@ public class TimeoutHeader extends UpnpHeader<Integer> {
     public static final Pattern PATTERN = Pattern.compile("Second-(?:([0-9]+)|infinite)");
 
     public TimeoutHeader() {
-        setValue(Constants.DEFAULT_SUBSCRIPTION_DURATION_SECONDS);
+        setValue(UserConstants.DEFAULT_SUBSCRIPTION_DURATION_SECONDS);
     }
 
     public TimeoutHeader(int timeoutSeconds) {
