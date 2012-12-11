@@ -232,12 +232,20 @@ public class ReceivingAction extends ReceivingSync<StreamRequestMessage, StreamR
 		return isRemote() &&  getRequestMessage().isXbox360Request();
 	}
     
+    /*
+     * Call this in action implementation code to determine if it has been cancelled
+     * 
+     * NOTE: remote actions are cancellable on connection closed by client only if Apache transport is used
+     * 
+     */
+    public static boolean isCancelled() {
+    	return Thread.interrupted() || (isRemote() && getRequestMessage().isCancelled());
+    }
+    
     public static void throwIfCancelled() throws InterruptedException {
-    	Exceptions.throwIfInterrupted();
-    	
-    	// only supported with apache transport implementation
-    	if(isRemote() && getRequestMessage().getConnection() != null && !getRequestMessage().getConnection().isOpen()) 
+    	if(isCancelled()) {
     		throw new InterruptedException();
+    	}
     }
 	
 }

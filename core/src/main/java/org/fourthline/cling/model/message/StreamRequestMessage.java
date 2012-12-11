@@ -106,5 +106,9 @@ public class StreamRequestMessage extends UpnpMessage<UpnpRequest> {
 	public DefaultHttpServerConnection getConnection() {
 		return connection;
 	}
+	
+	public boolean isCancelled() {
+		return connection != null && !connection.isOpen(); 
+	}
     
 }
