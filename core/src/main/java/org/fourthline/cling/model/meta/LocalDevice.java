@@ -46,7 +46,7 @@ import java.util.List;
  */
 public class LocalDevice extends Device<DeviceIdentity, LocalDevice, LocalService> {
 
-    final private DeviceDetailsProvider deviceDetailsProvider;
+    private DeviceDetailsProvider deviceDetailsProvider;
     
     private boolean isAdvertising = false;
     private boolean isSendingByeOnStart = false;
@@ -169,7 +169,12 @@ public class LocalDevice extends Device<DeviceIdentity, LocalDevice, LocalServic
         if (this.deviceDetailsProvider != null) {
             return this.deviceDetailsProvider.provide(info);
         }
-        return this.getDetails();
+        return super.getDetails();
+    }
+    
+    @Override
+    public DeviceDetails getDetails() {
+    	return getDetails(null);
     }
 
     @Override
