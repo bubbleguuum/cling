@@ -25,6 +25,7 @@ import org.fourthline.cling.model.ExpirationDetails;
 import org.fourthline.cling.model.Namespace;
 import org.fourthline.cling.model.resource.Resource;
 import org.fourthline.cling.model.meta.RemoteDevice;
+import org.fourthline.cling.model.types.DeviceType;
 import org.fourthline.cling.model.types.ServiceType;
 import org.fourthline.cling.test.data.SampleData;
 import org.fourthline.cling.transport.spi.DatagramIO;
@@ -150,6 +151,11 @@ public class RegistryExpirationTest {
                     public int getRegistryMaintenanceIntervalMillis() {
                         return wrapped.getRegistryMaintenanceIntervalMillis();
                     }
+                    
+                    @Override
+                	public boolean isReceivedSubscriptionTimeoutOverridenWithDefault() {
+                		return false;
+                	}
 
                     @Override
                     public Integer getRemoteDeviceMaxAgeSeconds() {
