@@ -78,6 +78,8 @@ import static org.fourthline.cling.model.XMLUtil.appendNewElementIfNotNull;
  * @author Mario Franco
  */
 public class DIDLParser extends SAXParser {
+	
+	final private static String UNKNOWN_TITLE = "Unknown Title";
 
     final private static Logger log = Logger.getLogger(DIDLParser.class.getName());
 
@@ -332,6 +334,7 @@ public class DIDLParser extends SAXParser {
         // rootElement.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns:didl", DIDLContent.NAMESPACE_URI);
         rootElement.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns:upnp", DIDLObject.Property.UPNP.NAMESPACE.URI);
         rootElement.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns:dc", DIDLObject.Property.DC.NAMESPACE.URI);
+        rootElement.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns:sec", DIDLObject.Property.SEC.NAMESPACE.URI);
 
         for (Container container : content.getContainers()) {
             if (container == null) continue;
@@ -354,7 +357,7 @@ public class DIDLParser extends SAXParser {
     	String title = container.getTitle(); 
         if (title == null) {
         	log.warning("Missing 'dc:title' element for container: " + container.getId());
-        	title = "No title";
+        	title = UNKNOWN_TITLE;
         }
         
         if (container.getClazz() == null) {
@@ -442,7 +445,7 @@ public class DIDLParser extends SAXParser {
     	String title = item.getTitle(); 
         if (title == null) {
         	log.warning("Missing 'dc:title' element for item: " + item.getId());
-        	title = "No title";
+        	title = UNKNOWN_TITLE;
         }
         if (item.getClazz() == null) {
             throw new RuntimeException("Missing 'upnp:class' element for item: " + item.getId());
@@ -490,6 +493,7 @@ public class DIDLParser extends SAXParser {
 
         appendProperties(descriptor, itemElement, item, "upnp", DIDLObject.Property.UPNP.NAMESPACE.class, DIDLObject.Property.UPNP.NAMESPACE.URI);
         appendProperties(descriptor, itemElement, item, "dc", DIDLObject.Property.DC.NAMESPACE.class, DIDLObject.Property.DC.NAMESPACE.URI);
+        appendProperties(descriptor, itemElement, item, "sec", DIDLObject.Property.SEC.NAMESPACE.class, DIDLObject.Property.SEC.NAMESPACE.URI);
 
         for (Res resource : item.getResources()) {
             if (resource == null) continue;
@@ -673,17 +677,18 @@ public class DIDLParser extends SAXParser {
                             )
                     );
                 } else if ("artist".equals(localName)) {
-                    getInstance().addProperty(
-                            new DIDLObject.Property.UPNP.ARTIST(
-                                    new PersonWithRole(getCharacters(), getAttributes().getValue("role"))
-                            )
-                    );
+                	getInstance().addProperty(
+                			new DIDLObject.Property.UPNP.ARTIST(
+                					new PersonWithRole(getCharacters(), getAttributes().getValue("role"))
+                					)
+                			);
                 } else if ("actor".equals(localName)) {
                     getInstance().addProperty(
                             new DIDLObject.Property.UPNP.ACTOR(
                                     new PersonWithRole(getCharacters(), getAttributes().getValue("role"))
                             )
                     );
+                    
                 } else if ("author".equals(localName)) {
                     getInstance().addProperty(
                             new DIDLObject.Property.UPNP.AUTHOR(
