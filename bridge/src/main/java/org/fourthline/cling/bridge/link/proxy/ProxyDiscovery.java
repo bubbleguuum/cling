@@ -332,7 +332,8 @@ public class ProxyDiscovery extends DefaultRegistryListener {
         			curDetails.getUpc(),
         			curDetails.getPresentationURI(),
         			curDetails.getDlnaDocs(),
-        			curDetails.getDlnaCaps());
+        			curDetails.getDlnaCaps(),
+        			curDetails.getSecProductCaps());
         					
         }
 
