@@ -234,7 +234,7 @@ public class LinkManager {
 	private void addProxyLocalDevice(EndpointResource resource, String udn) {
 
 		String requestURL = getRemoteProxyURL(resource.getModel(), udn);
-		log.warning("Sending GET to remote: " + requestURL);
+		log.info("Sending GET to remote: " + requestURL);
 
 		String body;
 		try {
