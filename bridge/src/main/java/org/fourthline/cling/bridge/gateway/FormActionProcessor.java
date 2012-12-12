@@ -20,6 +20,7 @@ package org.fourthline.cling.bridge.gateway;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.MultivaluedMap;
 
 import org.fourthline.cling.model.action.ActionArgumentValue;
@@ -41,8 +42,16 @@ public class FormActionProcessor {
 
     public static final String NULL_OUTPUT_ARGUMENT_VALUE = "<<NULL>>";
 
-    public ActionInvocation createInvocation(MultivaluedMap<String, String> form, Action action, String remoteAddr, String userAgent) throws InvalidValueException {
+    // called from ActionResource
+    public ActionInvocation createInvocation(MultivaluedMap<String, String> form, Action action, String remoteAddr) throws InvalidValueException {
+
+    	HttpServletRequest request = ActionResource.getRequestMessage();
+    	
+    	String userAgent = (String)request.getHeader("User-Agent");
+    	String avClientInfo = (String)request.getHeader("X-AV-Client-Info");
+    	
         ActionInvocation invocation = new ActionInvocation(action, userAgent);
+        invocation.setAvClientInfo(avClientInfo);
         if (action.hasInputArguments()) {
             for (ActionArgument arg : action.getInputArguments()) {
                 // The first is OK, multiple keys we just ignore
