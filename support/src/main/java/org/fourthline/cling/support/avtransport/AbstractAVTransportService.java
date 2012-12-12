@@ -275,11 +275,13 @@ public abstract class AbstractAVTransportService implements LastChangeDelegator 
                                            @UpnpInputArgument(name = "CurrentURIMetaData", stateVariable = "AVTransportURIMetaData") String currentURIMetaData)
             throws AVTransportException;
 
+    
     @UpnpAction
     public abstract void setNextAVTransportURI(@UpnpInputArgument(name = "InstanceID") UnsignedIntegerFourBytes instanceId,
                                                @UpnpInputArgument(name = "NextURI", stateVariable = "AVTransportURI") String nextURI,
                                                @UpnpInputArgument(name = "NextURIMetaData", stateVariable = "AVTransportURIMetaData") String nextURIMetaData)
             throws AVTransportException;
+            
 
     @UpnpAction(out = {
             @UpnpOutputArgument(name = "NrTracks", stateVariable = "NumberOfTracks", getterName = "getNumberOfTracks"),
@@ -338,7 +340,7 @@ public abstract class AbstractAVTransportService implements LastChangeDelegator 
     @UpnpAction
     public abstract void play(@UpnpInputArgument(name = "InstanceID") UnsignedIntegerFourBytes instanceId,
                               @UpnpInputArgument(name = "Speed", stateVariable = "TransportPlaySpeed") String speed)
-            throws AVTransportException;
+            throws AVTransportException, Exception;
 
     @UpnpAction
     public abstract void pause(@UpnpInputArgument(name = "InstanceID") UnsignedIntegerFourBytes instanceId)
