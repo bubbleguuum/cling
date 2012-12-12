@@ -76,8 +76,15 @@ public class ProxyActionExecutor implements ActionExecutor {
 
         try {
 			request.addHeader("Accept", "application/x-www-form-urlencoded");
+			
+			// User-Agent and X-AV-Client-Info are passed in the request for identification of the action in the receiving end
+			
 			if(actionInvocation.getUserAgent() != null) {
 				request.setHeader(HTTP.USER_AGENT, actionInvocation.getUserAgent());
+			}
+			
+			if(actionInvocation.getAvClientInfo() != null) {
+				request.setHeader("X-AV-Client-Info", actionInvocation.getAvClientInfo());
 			}
 			
 			StringEntity s = new StringEntity(getActionProcessor().createFormString(actionInvocation), "UTF-8");
