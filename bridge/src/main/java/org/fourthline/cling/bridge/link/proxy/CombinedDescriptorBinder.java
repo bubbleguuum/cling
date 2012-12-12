@@ -152,7 +152,7 @@ public class CombinedDescriptorBinder {
 
             return documentToString(dom);
         } catch (Exception ex) {
-            throw new IOException("Can't transform device graph into XML string: " + ex.toString(), ex);
+            throw new IOException("Can't transform device graph into XML string: " + ex.toString());
         }
     }
 
@@ -261,11 +261,11 @@ public class CombinedDescriptorBinder {
             for (ValidationError validationError : ex.getErrors()) {
                 log.severe(validationError.toString());
             }
-            throw new IOException("Could not parse combined descriptor: " + ex.toString(), ex);
+            throw new IOException("Could not parse combined descriptor: " + ex.toString());
         } catch (Exception ex) {
         	//ex.printStackTrace();
         	log.severe(xml);
-            throw new IOException("Could not parse combined descriptor: " + ex.toString(), ex);
+            throw new IOException("Could not parse combined descriptor: " + ex.toString());
         }
     }
 
@@ -275,8 +275,7 @@ public class CombinedDescriptorBinder {
             maxAgeSeconds = Integer.parseInt(deviceModelElement.getAttribute(ATTR.maxAgeSeconds.toString()));
         } catch (Exception ex) {
             throw new IOException(
-                    "No maxAgeSeconds attribute or wrong value on root element: " + ex.toString(), ex
-            );
+                    "No maxAgeSeconds attribute or wrong value on root element: " + ex.toString());
         }
 
         try {
@@ -286,7 +285,7 @@ public class CombinedDescriptorBinder {
                     endpoint
             );
         } catch (Exception ex) {
-            throw new IOException("Can't create remote device identity: " + ex.toString(), ex);
+            throw new IOException("Can't create remote device identity: " + ex.toString());
         }
     }
 
