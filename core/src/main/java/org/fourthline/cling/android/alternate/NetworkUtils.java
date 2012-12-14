@@ -78,5 +78,9 @@ public class NetworkUtils {
 	static public boolean isNetworkType(NetworkInfo networkInfo, int type) {
 		return networkInfo != null && networkInfo.getType() == type;
 	}
+	
+	static public boolean isSSDPAwareNetwork(NetworkInfo networkInfo) {
+		return isWiFiNetwork(networkInfo) || isEthNetwork(networkInfo);
+	}
 
 }
