@@ -77,6 +77,24 @@ public class AndroidSwitchableRouter extends SwitchableRouterImpl {
 			displayIntentInfo(intent);
 
 			NetworkInfo newNetworkInfo = NetworkUtils.getConnectedNetworkInfo(context);
+			
+			// when Android switches WiFI => MOBILE, sometimes we may have a short transition with no network: WIFI => NONE, NONE => MOBILE
+			// code below attempt to make it look like a single WIFI => MOBILE transition, retrying up to 3 times getting the current network
+			// Note: this can block the UI thread for up to 3s
+			if(networkInfo != null && newNetworkInfo == null) {
+				for(int i = 1 ; i <= 3 ; i++) {
+					try {
+						Thread.sleep(1000);
+					} catch(InterruptedException e) {
+						return ;
+					}
+					log.warning(String.format("%s => NONE network transition, waiting for new network...retry #%d", networkInfo.getTypeName(), i));
+
+					newNetworkInfo = NetworkUtils.getConnectedNetworkInfo(context);
+					if(newNetworkInfo != null) break;
+				}
+			}
+			
 			//if(newNetworkInfo != null && (networkInfo.getType() != newNetworkInfo.getType() && newNetworkInfo.isConnected())) {
 			// maybe we should also notify no network connectivity changes (info == null)
 			// but there is a short interval when this happens and is normal: going from WiFi <-> mobile
