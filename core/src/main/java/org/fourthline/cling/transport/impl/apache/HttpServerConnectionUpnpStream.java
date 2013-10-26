@@ -24,6 +24,7 @@ import java.net.URI;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.fourthline.cling.model.Namespace;
 import org.fourthline.cling.model.message.StreamRequestMessage;
 import org.fourthline.cling.model.message.StreamResponseMessage;
 import org.fourthline.cling.model.message.UpnpHeaders;
@@ -151,13 +152,15 @@ public class HttpServerConnectionUpnpStream extends UpnpStream {
         @Override
         protected void doService(HttpRequest httpRequest, HttpResponse httpResponse, HttpContext ctx)
                 throws HttpException, IOException {
-
-            log.fine("Processing HTTP request: " + httpRequest.getRequestLine().toString());
+        	
+        	
+            //log.severe("Processing HTTP request: " + httpRequest.getRequestLine().toString() + " " + httpRequest.getFirstHeader("User-Agent"));
 
             // Extract what we need from the HTTP httpRequest
             String requestMethod = httpRequest.getRequestLine().getMethod();
             String requestURI = httpRequest.getRequestLine().getUri();
-
+            requestURI = fixBogusCallbackURI(requestURI);
+            
             StreamRequestMessage requestMessage;
             try {
             	requestMessage =
@@ -208,15 +211,20 @@ public class HttpServerConnectionUpnpStream extends UpnpStream {
                 HttpEntityEnclosingRequest entityEnclosingHttpRequest = (HttpEntityEnclosingRequest) httpRequest;
                 
                 HttpEntity entity = entityEnclosingHttpRequest.getEntity();
-
-                if (requestMessage.isContentTypeMissingOrText()) {
-                    log.fine("HTTP request message contains text entity");
-                    requestMessage.setBody(UpnpMessage.BodyType.STRING, EntityUtils.toString(entity));
-                } else {
-                    log.fine("HTTP request message contains binary entity");
-                    requestMessage.setBody(UpnpMessage.BodyType.BYTES, EntityUtils.toByteArray(entity));
-                }
                 
+                byte data[] = EntityUtils.toByteArray(entity);
+                
+                if(data != null) {
+                	if (requestMessage.isContentTypeMissingOrText()) {
+                		log.fine("HTTP request message contains text entity");
+                		requestMessage.setBodyCharacters(data);
+                	} else {
+                		log.fine("HTTP request message contains binary entity");
+                		requestMessage.setBody(UpnpMessage.BodyType.BYTES, data);
+                	}
+                } else {
+                    log.fine("Request did not contain entity body");
+                }
 
             } else {
                 log.fine("Request did not contain entity body");
@@ -277,7 +285,30 @@ public class HttpServerConnectionUpnpStream extends UpnpStream {
             responseSent(responseMsg);
         }
 
-        protected HttpParams getResponseParams(UpnpOperation operation) {
+        private String fixBogusCallbackURI(String requestURI) {
+        	String callbackURISuffix = Namespace.EVENTS + Namespace.CALLBACK_FILE;
+        	if(requestURI != null) {
+        		
+        		int index = requestURI.indexOf(callbackURISuffix);
+        		if(index != -1) { 
+
+            		// workaround Yamaha and Onkyo bugs not dealing with multiple callback URLs 
+            		// returned in CALLBACK subscription response header: CALLBACK: <url 1><url 2>...<url n>
+            		// These devices make callback requests with bogus path 
+
+            		// ONKYO
+            		// requestURI = /dev/9bb022aa-e922-aab9-682b-aa09e9b9e059/svc/upnp-org/RenderingControl/event/cb192%2e168%2e10%2e38 is sent
+
+            		// YAMAHA
+            		// requestURI = /dev/9ab0c000-f668-11de-9976-00a0de870fd4/svc/upnp-org/RenderingControl/event/cb><http://10.189.150.197:42082/dev/9ab0c000-f668-11de-9976-00a0de870fd4/svc/upnp-org/RenderingControl/event/cb
+
+        			requestURI = requestURI.substring(0, index + callbackURISuffix.length());
+        		}
+        	}
+        	return requestURI;
+        }
+
+		protected HttpParams getResponseParams(UpnpOperation operation) {
             HttpParams localParams = new BasicHttpParams();
             return new DefaultedHttpParams(localParams, params);
         }
