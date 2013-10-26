@@ -17,16 +17,18 @@
 
 package org.fourthline.cling.model;
 
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+
+import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import org.w3c.dom.Text;
 
 /**
  * XML handling and printing shortcuts.
@@ -139,18 +141,21 @@ public class XMLUtil {
             }
 
         } else if (node.getNodeValue() != null) {
-            b.append(encodeText(node.getNodeValue()));
+            b.append(encodeText(node, node.getNodeValue()));
         }
 
         return b.toString();
     }
 
-    protected static String encodeText(String s) {
+    protected static String encodeText(Node node, String s) {
+    	
         s = s.replaceAll("&", "&amp;");
         s = s.replaceAll("<", "&lt;");
         s = s.replaceAll(">", "&gt;");
-        s = s.replaceAll("'", "&apos;");
-        s = s.replaceAll("\"", "&quot;");
+        if(node instanceof Attr) {
+        	s = s.replaceAll("'", "&apos;");
+        	s = s.replaceAll("\"", "&quot;");
+        }
         return s;
     }
 
