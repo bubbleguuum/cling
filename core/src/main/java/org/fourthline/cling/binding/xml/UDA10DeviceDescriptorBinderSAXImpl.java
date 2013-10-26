@@ -29,6 +29,7 @@ import org.fourthline.cling.model.types.InvalidValueException;
 import org.fourthline.cling.model.types.ServiceId;
 import org.fourthline.cling.model.types.ServiceType;
 import org.fourthline.cling.model.types.UDN;
+import org.seamless.util.MimeType;
 import org.seamless.xml.SAXParser;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
@@ -289,6 +290,13 @@ public class UDA10DeviceDescriptorBinderSAXImpl extends UDA10DeviceDescriptorBin
                     break;
                 case mimetype:
                     getInstance().mimeType = getCharacters();
+                    try {
+                    	MimeType.valueOf(getInstance().mimeType);
+                    } catch(IllegalArgumentException e) {
+                    	log.warning("found invalid icon mime-type: " + getInstance().mimeType);
+                    	getInstance().mimeType = null;
+                    }
+                    
                     break;
             }
         }
