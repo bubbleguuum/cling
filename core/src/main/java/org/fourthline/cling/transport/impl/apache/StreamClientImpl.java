@@ -240,12 +240,16 @@ public class StreamClientImpl implements StreamClient<StreamClientConfigurationI
                 HttpEntity entity = httpResponse.getEntity();
                 if (entity == null || entity.getContentLength() == 0) return responseMessage;
 
-                if (responseMessage.isContentTypeMissingOrText()) {
-                    log.fine("HTTP response message contains text entity");
-                    responseMessage.setBody(UpnpMessage.BodyType.STRING, EntityUtils.toString(entity));
-                } else {
-                    log.fine("HTTP response message contains binary entity");
-                    responseMessage.setBody(UpnpMessage.BodyType.BYTES, EntityUtils.toByteArray(entity));
+                byte data[] = EntityUtils.toByteArray(entity);
+                
+                if(data != null) {
+                	if (responseMessage.isContentTypeMissingOrText()) {
+                		log.fine("HTTP response message contains text entity");
+                		responseMessage.setBodyCharacters(data);
+                	} else {
+                		log.fine("HTTP response message contains binary entity");
+                		responseMessage.setBody(UpnpMessage.BodyType.BYTES, data);
+                	}
                 }
 
                 return responseMessage;
