@@ -17,6 +17,12 @@
 
 package org.fourthline.cling.model.meta;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.logging.Logger;
+
 import org.fourthline.cling.model.ServiceReference;
 import org.fourthline.cling.model.ValidationError;
 import org.fourthline.cling.model.ValidationException;
@@ -24,17 +30,14 @@ import org.fourthline.cling.model.types.Datatype;
 import org.fourthline.cling.model.types.ServiceId;
 import org.fourthline.cling.model.types.ServiceType;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 /**
  * The metadata of a service, with actions and state variables.
  *
  * @author Christian Bauer
  */
 public abstract class Service<D extends Device, S extends Service> {
+	
+	final private static Logger log = Logger.getLogger(Service.class.getName());
 
     final private ServiceType serviceType;
     final private ServiceId serviceId;
@@ -173,15 +176,19 @@ public abstract class Service<D extends Device, S extends Service> {
         }
         */
 
-        if (hasActions()) {
-            for (Action action : getActions()) {
-                errors.addAll(action.validate());
-            }
-        }
-
         if (hasStateVariables()) {
             for (StateVariable stateVariable : getStateVariables()) {
                 errors.addAll(stateVariable.validate());
+            }
+        }
+        
+        if (hasActions()) {
+            for (Action action : getActions()) {
+                //errors.addAll(action.validate());
+            	if(action.validate().size() != 0) {
+            		log.warning("discarding action failing validation: " + action.getName());
+            		actions.remove(action.getName());
+            	}
             }
         }
 
