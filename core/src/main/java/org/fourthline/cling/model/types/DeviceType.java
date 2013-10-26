@@ -18,6 +18,7 @@
 package org.fourthline.cling.model.types;
 
 import org.fourthline.cling.model.Constants;
+import org.seamless.util.Exceptions;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -90,10 +91,17 @@ public class DeviceType {
         // Now try a generic DeviceType parse
         if (deviceType == null) {
             Matcher matcher = PATTERN.matcher(s);
-            if (matcher.matches()) {
-                return new DeviceType(matcher.group(1), matcher.group(2), Integer.valueOf(matcher.group(3)));
-            } else {
-                throw new InvalidValueException("Can't parse device type string (namespace/type/version): " + s);
+            
+            try {
+
+            	if (matcher.matches()) {
+            		return new DeviceType(matcher.group(1), matcher.group(2), Integer.valueOf(matcher.group(3)));
+            	} else {
+            		throw new InvalidValueException("no match");
+            	} 
+            } catch(RuntimeException e) { // catches IllegalArgumentException, NumberFormatException, RuntimeException
+            	Exceptions.throwIfNPE(e);
+            	throw new InvalidValueException(String.format("Can't parse device type string (namespace/type/version): %s: %s", s, e.getMessage()));
             }
         }
         return deviceType;

@@ -17,10 +17,11 @@
 
 package org.fourthline.cling.model.types;
 
-import org.fourthline.cling.model.Constants;
-
-import java.util.regex.Pattern;
 import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import org.fourthline.cling.model.Constants;
+import org.seamless.util.Exceptions;
 
 /**
  * Represents a service type, for example <code>urn:my-domain-namespace:service:MyService:1</code>.
@@ -78,7 +79,10 @@ public class ServiceType {
      * @return Either a {@link UDAServiceType} or a more generic {@link ServiceType}.
      */
     public static ServiceType valueOf(String s) throws InvalidValueException {
-
+    	
+    	if (s == null)
+    		throw new InvalidValueException("Can't parse null string");
+    	
         ServiceType serviceType = null;
 
         // Sometimes crazy UPnP devices deliver spaces in a URN, don't ask...
@@ -93,17 +97,23 @@ public class ServiceType {
 
         // Now try a generic ServiceType parse
         if (serviceType == null) {
-            Matcher matcher = ServiceType.PATTERN.matcher(s);
-            if (matcher.matches()) {
-                return new ServiceType(matcher.group(1), matcher.group(2), Integer.valueOf(matcher.group(3)));
-            } else {
-            	matcher = ServiceType.BROKEN_PATTERN.matcher(s);
-            	if (matcher.matches()) {
-                    return new ServiceType(matcher.group(1), matcher.group(2), Integer.valueOf(matcher.group(3)));
-                } else {
-                	throw new InvalidValueException("Can't parse service type string (namespace/type/version): " + s);
-                }
-            }
+
+        	try {
+        		Matcher matcher = ServiceType.PATTERN.matcher(s);
+        		if (matcher.matches()) {
+        			return new ServiceType(matcher.group(1), matcher.group(2), Integer.valueOf(matcher.group(3))); //throws IllegalArgumentException, NumberFormatException
+        		} else {
+        			matcher = ServiceType.BROKEN_PATTERN.matcher(s);
+        			if (matcher.matches()) {
+        				return new ServiceType(matcher.group(1), matcher.group(2), Integer.valueOf(matcher.group(3))); //throws IllegalArgumentException, NumberFormatException
+        			} else {
+        				throw new InvalidValueException("no match");
+        			}
+        		}
+        	} catch(RuntimeException e) { // catches IllegalArgumentException, NumberFormatException
+        		Exceptions.throwIfNPE(e);
+        		throw new InvalidValueException(String.format("Can't parse service type string (namespace/type/version): %s: %s", s, e.getMessage()));
+        	}
         }
         return serviceType;
     }

@@ -18,6 +18,7 @@
 package org.fourthline.cling.model.types;
 
 import org.fourthline.cling.model.Constants;
+import org.seamless.util.Exceptions;
 
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
@@ -45,10 +46,16 @@ public class UDAServiceType extends ServiceType {
 
     public static UDAServiceType valueOf(String s) throws InvalidValueException {
         Matcher matcher = UDAServiceType.PATTERN.matcher(s);
-        if (matcher.matches()) {
-            return new UDAServiceType(matcher.group(1), Integer.valueOf(matcher.group(2)));
-        } else {
-            throw new InvalidValueException("Can't parse UDA service type string (namespace/type/version): " + s);
+        
+        try {
+        	if (matcher.matches()) {
+        		return new UDAServiceType(matcher.group(1), Integer.valueOf(matcher.group(2)));
+        	} else {
+        		throw new InvalidValueException("no match");
+        	}
+        } catch(RuntimeException e) {
+        	Exceptions.throwIfNPE(e);
+        	throw new InvalidValueException(String.format("Can't parse UDA service type string (namespace/type/version): %s: %s", s, e.getMessage()));
         }
     }
 

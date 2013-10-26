@@ -19,6 +19,7 @@ package org.fourthline.cling.model.types;
 
 import org.fourthline.cling.model.Constants;
 import org.fourthline.cling.model.ModelUtil;
+import org.seamless.util.Exceptions;
 
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
@@ -77,14 +78,22 @@ public class SoapActionType {
 
     public static SoapActionType valueOf(String s) throws InvalidValueException {
         Matcher magicControlMatcher = SoapActionType.PATTERN_MAGIC_CONTROL.matcher(s);
-        if (magicControlMatcher.matches()) {
-            return new SoapActionType(MAGIC_CONTROL_NS, MAGIC_CONTROL_TYPE, null, magicControlMatcher.group(1));
-        }
-        Matcher matcher = SoapActionType.PATTERN.matcher(s);
-        if (matcher.matches()) {
-            return new SoapActionType(matcher.group(1), matcher.group(2), Integer.valueOf(matcher.group(3)), matcher.group(4));
-        } else {
-            throw new InvalidValueException("Can't parse action type string (namespace/type/version#actionName): " + s);
+        
+        try {
+
+        	if (magicControlMatcher.matches()) {
+        		return new SoapActionType(MAGIC_CONTROL_NS, MAGIC_CONTROL_TYPE, null, magicControlMatcher.group(1)); // throws IllegalArgumentException
+        	}
+        	Matcher matcher = SoapActionType.PATTERN.matcher(s);
+        	if (matcher.matches()) {
+        		return new SoapActionType(matcher.group(1), matcher.group(2), Integer.valueOf(matcher.group(3)), matcher.group(4));  // throws IllegalArgumentException, NumberFormatException
+        	} else {
+        		throw new InvalidValueException("no match");
+        	}
+
+        } catch(RuntimeException e) {
+        	Exceptions.throwIfNPE(e);
+        	throw new InvalidValueException(String.format("Can't parse action type string (namespace/type/version#actionName): %s: %s", s, e.getMessage()));
         }
     }
 
