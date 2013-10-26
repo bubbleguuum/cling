@@ -122,14 +122,14 @@ public class ProtocolFactoryImpl implements ProtocolFactory {
         if (usnHeader == null) return false; // Not a service advertisement, drop it
 
         try {
-            NamedServiceType nst = NamedServiceType.valueOf(usnHeader);
+            NamedServiceType nst = NamedServiceType.valueOf(usnHeader); // throws InvalidValueException
             for (ServiceType exclusiveServiceType : exclusiveServiceTypes) {
                 if (nst.getServiceType().implementsVersion(exclusiveServiceType))
                     return true;
             }
         } catch (InvalidValueException ex) {
             log.finest("Not a named service type header value: " + usnHeader);
-        }
+        } 
         log.fine("Service advertisement not supported, dropping it: " + usnHeader);
         return false;
     }
@@ -157,7 +157,7 @@ public class ProtocolFactoryImpl implements ProtocolFactory {
             }
 
         } else if (getUpnpService().getConfiguration().getNamespace().isEventCallbackPath(message.getUri())) {
-
+        	/*
         	// workaround Onkyo bug with garbage trailing chars:
         	// /dev/9bb022aa-e922-aab9-682b-aa09e9b9e059/svc/upnp-org/RenderingControl/event/cb192%2e168%2e10%2e38 is sent
         	// instead of: /dev/9bb022aa-e922-aab9-682b-aa09e9b9e059/svc/upnp-org/RenderingControl/event/cb
@@ -172,6 +172,7 @@ public class ProtocolFactoryImpl implements ProtocolFactory {
         			message.setUri(URI.create(uri));
         		}
         	}
+        	*/
         	
             if (message.getOperation().getMethod().equals(UpnpRequest.Method.NOTIFY))
                 return new ReceivingEvent(getUpnpService(), message);
