@@ -86,7 +86,7 @@ public class ReceivingSearch extends ReceivingAsync<IncomingSearchRequest> {
         }
 
         UpnpHeader searchTarget = getInputMessage().getSearchTarget();
-
+        
         if (searchTarget == null) {
             log.fine("Invalid search request, did not contain ST header: " + getInputMessage());
             return;
@@ -252,7 +252,7 @@ public class ReceivingSearch extends ReceivingAsync<IncomingSearchRequest> {
         		continue;
         	}
             getUpnpService().getRouter().send(
-                    new OutgoingSearchResponseRootDeviceUDN(
+                    new OutgoingSearchResponseRootDevice(
                             getInputMessage(),
                             getDescriptorLocation(activeStreamServer, device),
                             device
@@ -306,7 +306,7 @@ public class ReceivingSearch extends ReceivingAsync<IncomingSearchRequest> {
             	if(!((LocalDevice)device).isAdvertising()) {
             		continue;
             	}
-
+            	
                 log.finer("Sending matching service type search result: " + device);
                 getUpnpService().getRouter().send(
                         new OutgoingSearchResponseServiceType(
